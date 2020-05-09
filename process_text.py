@@ -1,24 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Sun May  3 14:00:03 2020
-@author: miranda
-"""
+# Created on Tue May  5 13:24:27 2020
+# @author: miranda (upquark00)
+
+# TODO: CLEANUP, including check docstrings 
 
 import re 
 from string import punctuation 
-from tensorflow import keras
 
 def remove_handles(tweets_array):
-    ''' 
-    Takes in a numpy array of shape (m,), containing Tweets (strings). 
+    ''' Takes in a numpy array of shape (m,), containing Tweets (strings). 
     Returns a numpy array of same shape, with all @mentions removed. 
     I.e., ''@VirginAmerica What @dhepburn said.' becomes 
-    'What @dhepburn said.'
-    '''
+    'What @dhepburn said.' '''
+    
     for i in range(len(tweets_array)):
             tweets_array[i] = re.sub(r'@[A-Za-z0-9]+','',tweets_array[i])
-            # print(tweets_array[i])
+    return tweets_array
+
+def remove_hashtags(tweets_array):
+    for i in range(len(tweets_array)):
+        tweets_array[i] = re.sub(r'#[A-Za-z0-9]+','',tweets_array[i])                       
     return tweets_array
 
 def make_lowercase(tweets_array):
@@ -47,11 +49,14 @@ def remove_spaces(tokenized_tweets_list):
     # Deal with emojis. 
 
 def process_data(tweets_list):
+    
+# TODO: make this function cleaner / more Pythonic 
+    
     '''Tokenize and clean data. Defined in process_text.py.
     Includes tokenization, as well as removal of spaces, punctuation, 
     Twitter @mentiones, and links; lowercases words.
     ''' 
-    return remove_spaces(tokenize(remove_punct(remove_links(make_lowercase(remove_handles(tweets_list))))))
+    return remove_spaces(tokenize(remove_punct(remove_links(make_lowercase(remove_hashtags(remove_handles(tweets_list)))))))
 
 
 
