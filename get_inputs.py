@@ -5,7 +5,7 @@
 
 import numpy as np 
 import csv
-import process_text as pt
+from process_text import process_data
 from itertools import chain
 from tensorflow.keras.utils import to_categorical
 
@@ -16,9 +16,9 @@ from tensorflow.keras.utils import to_categorical
 class Dataset:
     
     def __init__(self, filename):
-        self.__raw_data = self.load_data(filename)
+        self.raw_data = self.load_data(filename)
         self.define_data()
-        self.define_labels(self.__raw_data)
+        self.define_labels(self.raw_data)
         
     def load_data(self, filename):
         '''
@@ -38,13 +38,14 @@ class Dataset:
             return data_array
         
     def define_data(self):
-        tweets = self.__raw_data[:,10] # Define features (x)
-        self.clean_tweets = (pt.process_data(tweets)) # Clean/tokenize data. Result: a list of len = 14640
+        tweets = self.raw_data[:,10] # Define features (x)
+        self.clean_tweets = process_data(tweets) # Clean/tokenize data. Result: a list of len = 14640
     
         # Specify characteristics. 15291 unique tokens in the set. 
         self.vocab = set(chain.from_iterable(self.clean_tweets))
         self.vocab_size = len(self.vocab) + 1 # Unique words in the set
         self.longest_tweet = len(max(self.clean_tweets, key=len))
+        # return self.clean_tweets
             
     def define_labels(self, data_array):
         # Encode label classes with ordinal integers
@@ -54,7 +55,7 @@ class Dataset:
         self.one_hot_numerical_labels = to_categorical(numerical_labels, 3)
     
     def get_data(self):
-        return self.__raw_data
+        return self.raw_data
 
     def get_clean_tweets(self):
         return self.clean_tweets

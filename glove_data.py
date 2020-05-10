@@ -43,8 +43,7 @@ def build_single_embedding_array(tweet, model, average_vector):
     or (1 x 35 x 50). 
     
     Inputs: tweet must be a list of strings. ''' 
-    # Create 2D array of zeros to be populated. 
-    rows = len(tweet) # Words in the tweet
+    rows = len(tweet) # Num words in the tweet
     cols = 50 # Length of pre-trained word vectors
     embedding_matrix = np.zeros([rows, cols])
     missing_words = []
@@ -93,17 +92,6 @@ def build_stacked_embedding_array(tweets_list, model, average_vector):
 glove_model, avg_vec = get_glove_model()
 stacked_embedding_array, missing_words = build_stacked_embedding_array(clean_tweets, glove_model, avg_vec)
 
-# =============================================================================
-# train_size = round(.7 *len(clean_tweets)) # 10248
-# test_size = round(.1 *len(clean_tweets)) # 1464
-# validate_size = round(.2 *len(clean_tweets)) # 2928
-# test_stop = train_size + test_size # marks divider btwn train and test data
-# =============================================================================
-
-# Split data 
-# train_x = stacked_embedding_array[0:train_size,:,:] # (10248, 35, 50)
-# test_x = stacked_embedding_array[train_size:test_stop,:,:] # (1464, 35, 50)
-
 train_size = round(len(stacked_embedding_array) * .8) # 11712
 
 x_data = stacked_embedding_array
@@ -114,33 +102,13 @@ y_data = one_hot_numerical_labels
 train_y = one_hot_numerical_labels[:train_size] # (11712, 3)
 test_y = one_hot_numerical_labels[train_size::] # (2928, 3)
 
-# =============================================================================
-# validate_x = stacked_embedding_array[test_stop::,:,:] # (2928, 35, 50)
-# validate_y = one_hot_numerical_labels[test_stop:] # (2928,))
-# =============================================================================
 
 def main():
     print('Module finished.')
-# =============================================================================
-#     train_x, test_x, train_y, test_y, validate_x, validate_y = build_test_train_validate_sets(clean_tweets)
-#     print(train_x, test_x)
-#     print(train_y, test_y)
-#     print(validate_x, validate_y)
-# =============================================================================
-    
+   
 if __name__ == "__main__":
     main()
     
-#for tweet in tweets_list:
- #   create_readable_sequence(tweet)
-# Create an input tensor where each element is result of running create_readable
-# on all tweets in the set. 
-# Final shape of the returned tensor 
-# # tweets x length of the longest tweet (35) x # features in each feature vector (50))
-
-        
-
-
 
 
 
