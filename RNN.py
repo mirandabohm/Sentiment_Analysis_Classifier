@@ -6,7 +6,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from get_inputs import vocab_size
-from glove_data import train_x, test_x, train_y, test_y
+from glove_data import train_x, test_x, train_y, test_y, glove_model, avg_vec, build_stacked_embedding_array
+from process_text import process_data
 
 # =============================================================================
 # - - - - - - - - - The Easier Way (Using Keras) - - - - - - - - -
@@ -24,8 +25,8 @@ model = Sequential()
 # Add an optional Embedding layer for transfer learning. 
 # model.add(Embedding(input_dim = input_dim, output_dim = output_dim, input_length = input_length))
 
-model.add(LSTM(units = 20, input_shape = (35,50), return_sequences = False, dropout= 0.25))
-# model.add(LSTM(units = 15, dropout= 0.25))
+model.add(LSTM(units = 50, input_shape = (35,50), return_sequences = True, dropout= 0.25))
+model.add(LSTM(units = 15, dropout= 0.25))
 model.add(Dense(num_classes, activation='softmax'))
 
 model.compile(loss = 'categorical_crossentropy', 
@@ -34,7 +35,7 @@ model.compile(loss = 'categorical_crossentropy',
 
 # Set training parameters 
 batch_size = 264
-num_epochs = 1
+num_epochs = 15
 
 history = model.fit(train_x, train_y,
           batch_size = batch_size, 
@@ -47,12 +48,18 @@ loss, accuracy = model.evaluate(test_x, test_y)
 print('Test Loss: %f' % (loss))
 print('Test Accuracy: %f' % (accuracy * 100))
 
+# Make prediction
 user_input = np.array([input('Enter a sentence to evaluate its sentiment: ',)])
+p = process_data(user_input)
+ans = model.predict(build_stacked_embedding_array(p, glove_model, avg_vec)[0])
+decision = np.argmax(ans)
 
-
-
-
-
+if decision == 2:
+    print('Negative')
+elif decision == 0:
+    print('Neutral')
+elif decision == 1:
+    print('Positive')
 
 # summarize history for accuracy
 plt.plot(history.history['accuracy'])
