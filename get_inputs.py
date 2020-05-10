@@ -9,10 +9,6 @@ from process_text import process_data
 from itertools import chain
 from tensorflow.keras.utils import to_categorical
 
-''' Import Twitter US Airline Sentiment dataset from Kaggle. Can be found here: 
-    https://www.kaggle.com/crowdflower/twitter-airline-sentiment
-    Dimensions: 14640 x 15. Sentiment is 63% negative, 21% neutral, 16% positive. '''
-  
 class Dataset:
     
     def __init__(self, filename):

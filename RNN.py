@@ -3,19 +3,14 @@
 # Created on Tue May  5 13:24:27 2020
 # @author: miranda (upquark00)
 
-import numpy as np
 import matplotlib.pyplot as plt
 from get_inputs import dataset
-from glove_data import train_x, test_x, train_y, test_y, glove_model, avg_vec, build_stacked_embedding_array
-from process_text import process_data
+from glove_data import train_x, test_x, train_y, test_y
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
-
-# =============================================================================
-# - - - - - - - - - The Easier Way (Using Keras) - - - - - - - - -
     
 batch_size = 64
-num_epochs = 15
+num_epochs = 25
 num_classes = 3 # Output of Dense is (None, num_classes)
 
 input_length = 35 # Length of input sequences, ie, length of padded sentences 
@@ -25,9 +20,9 @@ output_dim = 50 # Dimensionality of space into which words will be embedded.
 model = Sequential()
 
 # Can also add an Embedding layer here for transfer learning.     
-model.add(LSTM(units = 50, input_shape = (35,50), return_sequences = True, dropout= 0.25))
+model.add(LSTM(units = 64, input_shape = (35,50), return_sequences = True, dropout= 0.25))
 model.add(Dropout(0.2))
-model.add(LSTM(units = 15, dropout= 0.25))
+model.add(LSTM(units = 128, dropout= 0.25))
 model.add(Dense(num_classes, activation='softmax'))
 
 model.compile(loss = 'categorical_crossentropy', 
@@ -60,16 +55,9 @@ plt.ylabel('loss')
 plt.xlabel('Epoch')
 plt.legend(['Train', 'Test'], loc='upper left')
 plt.show()
-    
-user_input = 'yes'
-while user_input != 'no':
-    user_input = np.array([input('Enter a sentence to evaluate its sentiment: ',)])
-    p = process_data(user_input)
-    ans = model.predict(build_stacked_embedding_array(p, glove_model, avg_vec)[0])
-    likelihood = np.amax(ans)
-    decision = [key for key, value in dataset.label_scheme.items() if value == np.argmax(ans)][0]
-    print('Sentiment is {} with {}% likelihood.'.format(decision, likelihood * 100))
-    user_input = (input('Evaluate another sentence? Enter "No" to exit. ')).lower()
+
+model.save("model.h5")
+print("Model saved.")
 
 # =============================================================================
 # - - - - - - - - - - - The Harder, Math-y Way - - - - - - - - - - - 
