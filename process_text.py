@@ -3,7 +3,6 @@
 # Created on Tue May  5 13:24:27 2020
 # @author: miranda (upquark00)
 
-
 import re 
 from string import punctuation 
 
@@ -25,8 +24,7 @@ def process_data(tweets_array):
     '''
     
     for i in range(len(tweets_array)):
-        tweets_array[i] = re.sub(r'@[A-Za-z0-9]+','',tweets_array[i])
-        tweets_array[i] = re.sub(r'#[A-Za-z0-9]+','',tweets_array[i])                       
+        tweets_array[i] = re.sub(r'@[A-Za-z0-9]+','', re.sub(r'#[A-Za-z0-9]+','', tweets_array[i])).lower()                       
     
     list_of_lists = [tweet.lower() for tweet in tweets_array]
     list_of_lists = [re.sub('https?://[A-Za-z0-9./]+','', tweet) for tweet in list_of_lists]
@@ -41,9 +39,11 @@ def process_data(tweets_array):
 
 # TODO: add functionality to filter out strings containing only digits.  
 # Deal with emojis, imbalanced classes, and the many words not in GloVe. 
+# Enact explicit lemmatization
     
 def main():
     print('Module finished.')
+    # clean_tweets = process_data()
    
 if __name__ == "__main__":
     main()

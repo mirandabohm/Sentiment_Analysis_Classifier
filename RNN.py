@@ -5,37 +5,34 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from get_inputs import vocab_size
+from get_inputs import dataset
 from glove_data import train_x, test_x, train_y, test_y, glove_model, avg_vec, build_stacked_embedding_array
 from process_text import process_data
-
-# =============================================================================
-# - - - - - - - - - The Easier Way (Using Keras) - - - - - - - - -
-
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
 
-input_dim = vocab_size # Number of unique words in the Twitter dataset 
-output_dim = 50 # Dimensionality of space into which words will be embedded. 
-        # Needs to be set to the length of gloVe vectors (50, in our case).
+# =============================================================================
+# - - - - - - - - - The Easier Way (Using Keras) - - - - - - - - -
+    
+batch_size = 64
+num_epochs = 15
+num_classes = 3 # Output of Dense is (None, num_classes)
+
 input_length = 35 # Length of input sequences, ie, length of padded sentences 
-num_classes = 3
+input_dim = dataset.vocab_size # Num unique tokens in the dataset; needed for Embedding
+output_dim = 50 # Dimensionality of space into which words will be embedded. 
 
 model = Sequential()
-# Add an optional Embedding layer for transfer learning. 
-# model.add(Embedding(input_dim = input_dim, output_dim = output_dim, input_length = input_length))
 
+# Can also add an Embedding layer here for transfer learning.     
 model.add(LSTM(units = 50, input_shape = (35,50), return_sequences = True, dropout= 0.25))
+model.add(Dropout(0.2))
 model.add(LSTM(units = 15, dropout= 0.25))
 model.add(Dense(num_classes, activation='softmax'))
 
 model.compile(loss = 'categorical_crossentropy', 
              optimizer = 'adam', 
              metrics = ['accuracy'])
-
-# Set training parameters 
-batch_size = 264
-num_epochs = 15
 
 history = model.fit(train_x, train_y,
           batch_size = batch_size, 
@@ -48,35 +45,31 @@ loss, accuracy = model.evaluate(test_x, test_y)
 print('Test Loss: %f' % (loss))
 print('Test Accuracy: %f' % (accuracy * 100))
 
-# Make prediction
-user_input = np.array([input('Enter a sentence to evaluate its sentiment: ',)])
-p = process_data(user_input)
-ans = model.predict(build_stacked_embedding_array(p, glove_model, avg_vec)[0])
-decision = np.argmax(ans)
-
-if decision == 2:
-    print('Negative')
-elif decision == 0:
-    print('Neutral')
-elif decision == 1:
-    print('Positive')
-
-# summarize history for accuracy
 plt.plot(history.history['accuracy'])
 plt.plot(history.history['val_accuracy'])
-plt.title('model accuracy')
+plt.title('Model Accuracy vs. Epoch')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+plt.legend(['Train', 'Test'], loc='upper left')
 plt.show()
-# summarize history for loss
+
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
-plt.title('model loss')
+plt.title('Model Loss vs. Epoch')
 plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Test'], loc='upper left')
 plt.show()
+    
+user_input = 'yes'
+while user_input != 'no':
+    user_input = np.array([input('Enter a sentence to evaluate its sentiment: ',)])
+    p = process_data(user_input)
+    ans = model.predict(build_stacked_embedding_array(p, glove_model, avg_vec)[0])
+    likelihood = np.amax(ans)
+    decision = [key for key, value in dataset.label_scheme.items() if value == np.argmax(ans)][0]
+    print('Sentiment is {} with {}% likelihood.'.format(decision, likelihood * 100))
+    user_input = (input('Evaluate another sentence? Enter "No" to exit. ')).lower()
 
 # =============================================================================
 # - - - - - - - - - - - The Harder, Math-y Way - - - - - - - - - - - 
@@ -106,12 +99,5 @@ plt.show()
 # 
 # (Coming Soon)
 #
+# layer = Dropout(0.5)
 # =============================================================================
-
-
- # for every input sequence (tweet),a single output vector with as many values as you have units in lstm
-# sequence length does not affect the dimensionality of the ouput (using default method).
-# top layer = last layer 
-# x_t is a word; each sequence of x_t-1 to X_1 is a tweet 
-# inputs to LSTM: A 3D tensor with shape `[batch, timesteps, feature]`
-# Return_sequences = True to retain output at each time point and provide 3D to next LSTM layer

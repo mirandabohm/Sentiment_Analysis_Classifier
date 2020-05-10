@@ -4,14 +4,16 @@
 # @author: miranda (upquark00)
 
 import numpy as np
-from get_inputs import clean_tweets, one_hot_numerical_labels
+from get_inputs import dataset
 
 def get_glove_model():
+    ''' 
+    Load gloVe pre-trained vectors. 
+    Dict keys = tokens (strings); values = word vectors (np arrays of length 50). 
+    ''' 
     filename = 'glove_twitter_50d.txt'
-    # Load gloVe pre-trained vectors. 
-    # Dict Keys = Words (strings); Values = Word Vectors (np arrays of length 50). 
     print("gloVe vectors loading . . .")
-    with open(filename,'r') as foo:
+    with open(filename,'r', encoding='utf8') as foo:
         gloveModel = {}
         for line in foo:
             splitLines = line.split()
@@ -20,7 +22,7 @@ def get_glove_model():
             gloveModel[word] = wordEmbedding
             
     # Get average of word vectors to be used for unseen words, per GloVe author
-    with open(filename, 'r') as foo:
+    with open(filename, 'r', encoding='utf8') as foo:
         for i, line in enumerate(foo):
             pass
     n_vec = i + 1
@@ -28,7 +30,7 @@ def get_glove_model():
     
     vecs = np.zeros((n_vec, hidden_dim), dtype=np.float32)
     
-    with open(filename, 'r') as foo:
+    with open(filename, 'r', encoding='utf8') as foo:
         for i, line in enumerate(foo):
             vecs[i] = np.array([float(n) for n in line.split(' ')[1:]], dtype=np.float32)
     
@@ -37,12 +39,13 @@ def get_glove_model():
     return gloveModel, average_vec
 
 def build_single_embedding_array(tweet, model, average_vector):
-    ''' Construct a matrix of word vectors for each tweet with an added axis 0.
+    ''' 
+    Construct a matrix of word vectors for each tweet with an added axis 0.
     Rows = Timesteps, eg Word Vectors; Columns = Feature Vectors.
     Returns a 3D array of size ( 1 x # Padded Sequence Length x # Features),
     or (1 x 35 x 50). 
-    
-    Inputs: tweet must be a list of strings. ''' 
+    Inputs: tweet must be a list of strings. 
+    ''' 
     rows = len(tweet) # Num words in the tweet
     cols = 50 # Length of pre-trained word vectors
     embedding_matrix = np.zeros([rows, cols])
@@ -69,12 +72,13 @@ def build_single_embedding_array(tweet, model, average_vector):
     return formatted_embedding_matrix, missing_words
    
 def build_stacked_embedding_array(tweets_list, model, average_vector):
-    ''' Builds a 3-dimensional numpy array with the following dimensions: 
-        ( # Instances x Padded Sequence Length # Features ), or
-        ( # Tweets in Set x # Words in Each Padded Tweet x # Word Vector Length)
-        For Tweets.csv, this is 14640 x 35 x 50. 
+    ''' 
+    Builds a 3-dimensional numpy array with the following dimensions: 
+    ( # Instances x Padded Sequence Length # Features ), or
+    ( # Tweets in Set x # Words in Each Padded Tweet x # Word Vector Length)
+    For Tweets.csv, this is 14640 x 35 x 50. 
         
-        Inputs: tweets_list will be a list of lists containing strings. ''' 
+    Inputs: tweets_list will be a list of lists containing strings. ''' 
     
     total_missing_words = []
     axis0 = len(tweets_list)
@@ -90,7 +94,7 @@ def build_stacked_embedding_array(tweets_list, model, average_vector):
 
 # Missing words is a dictionary of all Tweeted words that are not in our GloVe model.
 glove_model, avg_vec = get_glove_model()
-stacked_embedding_array, missing_words = build_stacked_embedding_array(clean_tweets, glove_model, avg_vec)
+stacked_embedding_array, missing_words = build_stacked_embedding_array(dataset.clean_sequences, glove_model, avg_vec)
 
 train_size = round(len(stacked_embedding_array) * .8) # 11712
 
@@ -98,9 +102,9 @@ x_data = stacked_embedding_array
 train_x = x_data[:train_size] # (11712, 35, 50)
 test_x = x_data[train_size::] # (2928, 35, 50)
 
-y_data = one_hot_numerical_labels
-train_y = one_hot_numerical_labels[:train_size] # (11712, 3)
-test_y = one_hot_numerical_labels[train_size::] # (2928, 3)
+y_data = dataset.one_hot_numerical_labels
+train_y = dataset.one_hot_numerical_labels[:train_size] # (11712, 3)
+test_y = dataset.one_hot_numerical_labels[train_size::] # (2928, 3)
 
 
 def main():
