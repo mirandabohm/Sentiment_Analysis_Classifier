@@ -10,7 +10,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
     
 batch_size = 64
-num_epochs = 25
+num_epochs = 35
 num_classes = 3 # Output of Dense is (None, num_classes)
 
 input_length = 35 # Length of input sequences, ie, length of padded sentences 
@@ -20,9 +20,9 @@ output_dim = 50 # Dimensionality of space into which words will be embedded.
 model = Sequential()
 
 # Can also add an Embedding layer here for transfer learning.     
-model.add(LSTM(units = 64, input_shape = (35,50), return_sequences = True, dropout= 0.25))
-model.add(Dropout(0.2))
-model.add(LSTM(units = 128, dropout= 0.25))
+model.add(LSTM(units = 25, input_shape = (35,50), return_sequences = True, dropout= 0.20))
+# model.add(Dropout(0.2))
+model.add(LSTM(units = 15, dropout= 0.1))
 model.add(Dense(num_classes, activation='softmax'))
 
 model.compile(loss = 'categorical_crossentropy', 
