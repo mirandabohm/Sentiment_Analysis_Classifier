@@ -8,6 +8,7 @@ from get_inputs import dataset
 from glove_data import train_x, test_x, train_y, test_y
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
+from tensorflow.keras.metrics import Precision, Recall
     
 batch_size = 64
 num_epochs = 35
@@ -27,7 +28,7 @@ model.add(Dense(num_classes, activation='softmax'))
 
 model.compile(loss = 'categorical_crossentropy', 
              optimizer = 'adam', 
-             metrics = ['accuracy'])
+             metrics = ['accuracy', Precision(), Recall()])
 
 history = model.fit(train_x, train_y,
           batch_size = batch_size, 
@@ -36,7 +37,7 @@ history = model.fit(train_x, train_y,
           )
 
 model.summary()
-loss, accuracy = model.evaluate(test_x, test_y)
+loss, accuracy, precision, recall = model.evaluate(test_x, test_y)
 print('Test Loss: %f' % (loss))
 print('Test Accuracy: %f' % (accuracy * 100))
 
@@ -52,6 +53,22 @@ plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
 plt.title('Model Loss vs. Epoch')
 plt.ylabel('loss')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Test'], loc='upper left')
+plt.show()
+
+plt.plot(history.history[model.metrics_names[2]])
+plt.plot(history.history['val_' + model.metrics_names[2]])
+plt.title('Model Precision vs. Epoch')
+plt.ylabel('Precision')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Test'], loc='upper left')
+plt.show()
+
+plt.plot(history.history[model.metrics_names[3]])
+plt.plot(history.history['val_' + model.metrics_names[3]])
+plt.title('Model Recall vs. Epoch')
+plt.ylabel('Recall')
 plt.xlabel('Epoch')
 plt.legend(['Train', 'Test'], loc='upper left')
 plt.show()
