@@ -1,3 +1,12 @@
 
+# Mac
+.DS_Store
+
+# Byte-compiled / DLL
 __pycache__
-.DS_store
+*.py[cod]
+*$py.class
+
+# Spyder settings
+.spyderproject
+.spyproject
