@@ -9,7 +9,7 @@ from process_text import process_data
 from glove_data import glove_model, avg_vec, build_stacked_embedding_array
 from get_inputs import dataset
 
-model = load_model('model.h5')
+model = load_model('best_model.h5')
 
 user_input = 'yes'
 while user_input != 'no':
@@ -18,6 +18,6 @@ while user_input != 'no':
     ans = model.predict(build_stacked_embedding_array(p, glove_model, avg_vec)[0])
     likelihood = np.amax(ans)
     decision = [key for key, value in dataset.label_scheme.items() if value == np.argmax(ans)][0]
-    print('Sentiment is {} with {}% likelihood.'.format(decision, likelihood * 100))
+    print('Sentiment is {} with {:.2f}% likelihood.'.format(decision, likelihood * 100))
     user_input = (input('Evaluate another sentence? Enter "No" to exit. ')).lower()
 
