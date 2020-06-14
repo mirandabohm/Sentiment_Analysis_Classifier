@@ -11,7 +11,7 @@ def get_glove_model():
     Load gloVe pre-trained vectors. 
     Dict keys = tokens (strings); values = word vectors (np arrays of length 50). 
     ''' 
-    filename = 'glove_twitter_50d.txt'
+    filename = 'Data/glove_twitter_50d.txt'
     print("gloVe vectors loading . . .")
     with open(filename,'r', encoding='utf8') as foo:
         gloveModel = {}

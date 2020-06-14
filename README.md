@@ -23,10 +23,10 @@ LSTM units = ~32 # 15 to 30 between two or more layers; higher numbers provoked 
 Dropout = ~0.20
 ``` 
 
-![Image of Accuracy vs. Epochs](Figure_9.png)![Image of Accuracy vs. Epochs](Figure_10.png)
+![Image of Accuracy vs. Epochs](Images/Figure_9.png)![Image of Accuracy vs. Epochs](Images/Figure_10.png)
 
 
-![Image of Loss vs. Epochs](Figure_11.png)![Image of Loss vs. Epochs](Figure_12.png)
+![Image of Loss vs. Epochs](Images/Figure_11.png)![Image of Loss vs. Epochs](Images/Figure_12.png)
 
 ## Dependencies
 GloVe: Global Vectors for Word Representation 
@@ -57,6 +57,9 @@ https://matplotlib.org/users/installing.html
 ```
 ! pip install matplotlib
 ```
+
+## Project Structure
+The GloVe and Kaggle data will need to be downloaded from their respective sites and placed within a subdirectory named Data. 
 
 ## Future Tasks
 Model accuracy averaged around 75-85% on training and testing data, with various parameters. 

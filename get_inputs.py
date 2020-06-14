@@ -73,7 +73,7 @@ class Dataset:
         return self.one_hot_numerical_labels
 
 
-dataset = Dataset(filename = 'Tweets.csv') 
+dataset = Dataset(filename = 'Data/Tweets.csv') 
 clean_tweets = dataset.get_clean_sequences() # List 
 vocab, vocab_size = dataset.get_vocab_info() # Returns a set and an int, respectively
 one_hot_numerical_labels = dataset.get_one_hot_numerical_labels()
