@@ -72,7 +72,5 @@ While this is in range of acceptable, improvements could be made by further expl
 
 I hope to implement RNN "from scratch" - that is, without the use of APIs, in the near future, in the same vein that I have written vanilla nets using only Numpy in the past. Since LSTM has garnered wide preference over naive ANNs, CNNs, and even RNNs, for sentiment analysis, I opted to start there. 
 
-## Final Thoughts
-This has been a significant learning experience for me, and I sincerely appreciate the opportunity.
-
+## Final Note
 My script was created in Spyder in Python v. 3.6.0 and Anaconda 2019.10. 

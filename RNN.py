@@ -10,8 +10,11 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
 from tensorflow.keras.metrics import Precision, Recall, TruePositives, TrueNegatives, FalsePositives, FalseNegatives
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-   
-batch_size = 64
+
+import time
+start = time.time()
+
+batch_size = 500
 max_epochs = 500
 num_classes = 3 # Output of Dense is (None, num_classes)
 
@@ -94,12 +97,14 @@ plt.show()
 model.save("model.h5")
 print("Model saved.")
 
+print('Script completed after',time.time() - start, 'seconds.')
+
 # =============================================================================
 # - - - - - - - - - - - The Harder, Math-y Way - - - - - - - - - - - 
 
 # # Define model hyperparameters 
 # learning_rate = 0.0001    
-# # epochs = 25               
+# # epochs = 25 
 # T = 50 # length of gloVe training vectors; also padded tweet sentences 
 # hidden_dim = 100 # Number units in hidden layer 
 # out_dim = 3 # Test various
