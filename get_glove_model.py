@@ -38,7 +38,7 @@ def make_glove_model():
     print(len(gloveModel),"gloVe vectors loaded.")
     return gloveModel, avg_vec
 
-if not os.path.isfile('gl.npy'):
+if not os.path.isfile('glove_model.npy'):
     glove_model, avg_vec = make_glove_model()
     np.save('glove_model.npy', glove_model)  
     np.save('avg_vec.npy', avg_vec)  

@@ -7,7 +7,6 @@ import numpy as np
 from get_inputs import dataset
 
 # TODO: model is not standalone. Throws an error if glove_model.npy or avg_vec.npy not present
-
 glove_model = np.load('glove_model.npy',allow_pickle='TRUE').item()
 avg_vec = np.load('avg_vec.npy', allow_pickle='TRUE').tolist()
 
