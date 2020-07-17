@@ -6,37 +6,10 @@
 import numpy as np
 from get_inputs import dataset
 
-def get_glove_model():
-    ''' 
-    Load gloVe pre-trained vectors. 
-    Dict keys = tokens (strings); values = word vectors (np arrays of length 50). 
-    ''' 
-    filename = 'Data/glove_twitter_50d.txt'
-    print("gloVe vectors loading . . .")
-    with open(filename,'r', encoding='utf8') as foo:
-        gloveModel = {}
-        for line in foo:
-            splitLines = line.split()
-            word = splitLines[0]
-            wordEmbedding = np.array([float(value) for value in splitLines[1:]])
-            gloveModel[word] = wordEmbedding
-            
-    # Get average of word vectors to be used for unseen words, per GloVe author
-    with open(filename, 'r', encoding='utf8') as foo:
-        for i, line in enumerate(foo):
-            pass
-    n_vec = i + 1
-    hidden_dim = len(line.split(' ')) - 1
-    
-    vecs = np.zeros((n_vec, hidden_dim), dtype=np.float32)
-    
-    with open(filename, 'r', encoding='utf8') as foo:
-        for i, line in enumerate(foo):
-            vecs[i] = np.array([float(n) for n in line.split(' ')[1:]], dtype=np.float32)
-    
-    average_vec = np.mean(vecs, axis=0)
-    print(len(gloveModel),"gloVe vectors loaded.")
-    return gloveModel, average_vec
+# TODO: model is not standalone. Throws an error if glove_model.npy or avg_vec.npy not present
+
+glove_model = np.load('glove_model.npy',allow_pickle='TRUE').item()
+avg_vec = np.load('avg_vec.npy', allow_pickle='TRUE').tolist()
 
 def build_single_embedding_array(tweet, model, average_vector):
     ''' 
@@ -93,7 +66,6 @@ def build_stacked_embedding_array(tweets_list, model, average_vector):
     return large_embedding_matrix, total_missing_words
 
 # Missing words is a dictionary of all Tweeted words that are not in our GloVe model.
-glove_model, avg_vec = get_glove_model()
 stacked_embedding_array, missing_words = build_stacked_embedding_array(dataset.clean_sequences, glove_model, avg_vec)
 
 train_size = round(len(stacked_embedding_array) * .8) # 11712
@@ -105,7 +77,6 @@ test_x = x_data[train_size::] # (2928, 35, 50)
 y_data = dataset.one_hot_numerical_labels
 train_y = dataset.one_hot_numerical_labels[:train_size] # (11712, 3)
 test_y = dataset.one_hot_numerical_labels[train_size::] # (2928, 3)
-
 
 def main():
     print('Module finished.')

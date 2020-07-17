@@ -14,7 +14,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import time
 start = time.time()
 
-batch_size = 500
+batch_size = 64
 max_epochs = 500
 num_classes = 3 # Output of Dense is (None, num_classes)
 
