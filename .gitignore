@@ -167,3 +167,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Numpy binary file
+*.npy

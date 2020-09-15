@@ -5,10 +5,15 @@
 
 import numpy as np
 from get_inputs import dataset
+from get_glove_model import make_glove_model
 
 # TODO: model is not standalone. Throws an error if glove_model.npy or avg_vec.npy not present
-glove_model = np.load('glove_model.npy',allow_pickle='TRUE').item()
-avg_vec = np.load('avg_vec.npy', allow_pickle='TRUE').tolist()
+# =============================================================================
+# glove_model = np.load('glove_model.npy',allow_pickle='TRUE').item()
+# avg_vec = np.load('avg_vec.npy', allow_pickle='TRUE').tolist()
+# =============================================================================
+
+glove_model, avg_vec = make_glove_model() 
 
 def build_single_embedding_array(tweet, model, average_vector):
     ''' 
