@@ -1,18 +1,20 @@
 # An LSTM-Based Sentiment Classifier Built in Keras and Trained on Kaggle Twitter Airline Sentiment Data 
   
-The goal was to build a classifier that could identify the overall sentiment of a user-inputted string, with three possible labels: 'positive', 'negative', and 'neutral'. Thus it was appropriate to frame this task a three-class classification problem, where every prediction yields a class label and a likelihood score. Alternatively, a regression approach could have been used. 
+The goal was to build a classifier that could identify the overall sentiment of user input, such that each string received one of three possible mutually-exclusive labels: 'positive', 'negative', or 'neutral'. The task was thus framed as a three-class classification problem, in which each model output consisted of likelihood scores for each class. Targets associated with the highest of class scores were then assigned. A regression approach could also have been used; rather than yield a prediction likelihood for each class, the model in that case would have presented a number between -1.0 and 1.0 for each input datum. A target value closer to the negative value would have been labeled 'negative' (after some determined threshold), and those closer to the positive would have been labeled 'positive'. Those nearer to zero would have been determined to be neutral. Both approaches are valid and ideally would find similar results. 
 
-In order to boost accuracy and reduce  computational resources, I opted to use a pre-trained set of word vectors trained on a very large corpus of Twitter data. GloVe is a an unsupervised solution derived from the distributional hypothesis (“words which are similar in meaning occur in similar contexts.” (Herbert Rubenstein and John B. Goodenough. 1965.
-Contextual correlates of synonymy. Communications of the ACM). 
+In order to boost accuracy and reduce  computational resources, I opted to use a pre-trained set of word vectors trained on a very large corpus of Twitter data. GloVe is a an unsupervised solution derived from the distributional hypothesis, which states that “words which are similar in meaning occur in similar contexts.” (Herbert Rubenstein and John B. Goodenough. 1965.
+Contextual Correlates of Synonymy. Communications of the ACM (October 1965), https://doi.org/10.1145/365628.365657). 
 
 ## Getting Started
-Version: Python v. 3.7.6 and Anaconda 4.8.3. 
+The model was built in Python v. 3.7.6 and Anaconda 4.8.3. Anaconda is a powerful scientific computing platform which includes its own package and environment manager. To get Anaconda, visit the official downloads page: 
+
+https://docs.anaconda.com/anaconda/install/
 
 ## Dependencies
 The GloVe and Kaggle data will need to be downloaded from their respective sites and placed within a subdirectory named Data. 
 
 GloVe: Global Vectors for Word Representation 
-I used the 50d Twitter set found here: 
+This model utilizes the 50d Twitter set found here: 
 https://nlp.stanford.edu/projects/glove/
 
 The Twitter U.S. Airline Sentiment dataset from Kaggle
@@ -25,19 +27,19 @@ As outlined below, such class skew can be problematic, and I hope to address thi
 Tensorflow (including Keras):  
 https://www.tensorflow.org/install/pip
 ```
-! pip install tensorflow
+! conda install tensorflow
 ```
 
 NumPy:
 
 https://docs.scipy.org/doc/numpy/user/install.html
 ```
-! pip install numpy
+! conda install numpy
 ```
 Matplotlib (for visualizations): 
 https://matplotlib.org/users/installing.html
 ```
-! pip install matplotlib
+! conda install matplotlib
 ```
 
 Download the repo and run get_glove_model.py to build glove_model.npy and avg_vec.npy. Once these files are written, run run_me.py. I will adapt project structure to automatically call get_glove_model.py from within run_me.py, going forward. 
@@ -92,4 +94,4 @@ While this is in range of acceptable, improvements could be made by further expl
 * Use of a dataset without skew between classes; or, because some discrepancy is nearly inevitable, better manipulation of data to account for class imbalance. 
 * More extensive data cleansing to accomodate a higher percentage of missing words, as well as digits and other outliers not addressed. 
 
-I hope to implement RNN "from scratch" - that is, without the use of APIs, in the near future, in the same vein that I have written vanilla nets using only Numpy in the past. Since LSTM has garnered wide preference over naive ANNs, CNNs, and even RNNs, for sentiment analysis, I opted to start there. 
+Future iterations could attempt to implement an RNN "from scratch" - that is, without the use of APIs, though this may be an infeasible task (the try is half the adventure). LSTM has garnered wide preference over naive ANNs, CNNs, and generic RNNs for sentiment analysis, though lately their cousin, the transformer, has gained popularity. 
