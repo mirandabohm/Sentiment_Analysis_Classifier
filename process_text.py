@@ -32,6 +32,7 @@ def process_data(tweets_array):
     
     list_of_lists = [tweet.split(' ') for tweet in list_of_lists]
     
+    # comment 
     for i in range(len(list_of_lists)):
         list_of_lists[i] = [word for word in list_of_lists[i] if word != '']
     
