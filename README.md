@@ -5,6 +5,8 @@ The goal was to build a classifier that could identify the overall sentiment of 
 In order to boost accuracy and reduce  computational resources, I opted to use a pre-trained set of word vectors trained on a very large corpus of Twitter data. GloVe is a an unsupervised solution derived from the distributional hypothesis, which states that “words which are similar in meaning occur in similar contexts.” (Herbert Rubenstein and John B. Goodenough. 1965.
 Contextual Correlates of Synonymy. Communications of the ACM (October 1965), https://doi.org/10.1145/365628.365657). 
 
+![Animation Illustrating Classifier Interface](Images/example.gif)![Animation Illustrating Classifier Interface](Images/example.gif)
+
 ## Getting Started
 The model was built in Python v. 3.7.6 and Anaconda 4.8.3. Anaconda is a powerful scientific computing platform which includes its own package and environment manager. To get Anaconda, visit the official downloads page: 
 
