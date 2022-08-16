@@ -3,15 +3,32 @@
 # Created on Tue May  5 13:24:27 2020
 # @author: miranda (upquark00)
 
-import numpy as np 
+import numpy 
 import csv
 from process_text import process_data
 from itertools import chain
 from tensorflow.keras.utils import to_categorical
 
 class Dataset:
+    '''
+    This is a class containing dataset vectors, intended to take raw, 
+    unformatted text and convert and store its cleaned and tokenized versions.
+    It also creates and carries one-hot-encoded labels for said data. 
+    
+    Attributes: 
+        filename: 
+    
+    '''
     
     def __init__(self, filename):
+        '''
+        The constructor for Dataset class.
+        
+        Parameters:
+            raw_data (numpy.ndarray)
+            define_data ()
+
+        '''
         self.raw_data = self.load_data(filename)
         self.define_data()
         self.set_labels(self.raw_data)
@@ -29,12 +46,13 @@ class Dataset:
         with open(filename, 'r', encoding='utf8') as f:
             reader = csv.reader(f, delimiter=',')
             headers = next(reader)
-            data_array = np.array(list(reader))
+            data_array = numpy.array(list(reader))
             return data_array
         
     def define_data(self):
         '''
-        Sets dataset characteristics
+        Setter method for class Dataset. 
+
         '''
         
         tweets = self.raw_data[:,10] # Define features (x)
@@ -49,11 +67,11 @@ class Dataset:
         '''
         self.label_scheme = {'negative': 0, 'neutral': 1, 'positive': 2}
         self.targets = data_array[:,1] # Define labels (y)
-        self.numerical_labels = np.array([self.label_scheme[item] for item in self.targets])
+        self.numerical_labels = numpy.array([self.label_scheme[item] for item in self.targets])
         self.one_hot_numerical_labels = to_categorical(self.numerical_labels, 3)
     
     def get_data(self):
-        '''Getter method for raw_data
+        '''Getter method for raw_data attribute of Dataset class.
         '''
         return self.raw_data
 
