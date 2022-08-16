@@ -35,25 +35,20 @@ class Dataset:
         
     def load_data(self, filename):
         '''
-        Parameters
-        ----------
-        filename: a string filename which includes extension and relevant path.
+        Parameters:
+            filename (string): path and filename including file extension.
         
-        Returns
-        ----------
-        data_array: a numpy array of dimensions (examples, features).
+        Returns: 
+            data (numpy array): dimensions (examples, features)
         '''
         with open(filename, 'r', encoding='utf8') as f:
             reader = csv.reader(f, delimiter=',')
             headers = next(reader)
-            data_array = numpy.array(list(reader))
-            return data_array
+            data = numpy.array(list(reader))
+            return data
         
     def define_data(self):
-        '''
-        Setter method for class Dataset. 
-
-        '''
+        '''Setter method for class Dataset'''
         
         tweets = self.raw_data[:,10] # Define features (x)
         self.clean_sequences = process_data(tweets) # Clean/tokenize data. Result: a list of len = 14640
@@ -61,23 +56,26 @@ class Dataset:
         self.vocab_size = len(self.vocab) + 1 # Unique words in the set
         self.longest_sequence = len(max(self.clean_sequences, key=len))
             
-    def set_labels(self, data_array):
+    def set_labels(self, data):
         '''
-        Sets label classes
+        Setter method for label classes.
+        
+        Parameters: 
+            data (numpy.ndarray): 
+        
         '''
+        
         self.label_scheme = {'negative': 0, 'neutral': 1, 'positive': 2}
-        self.targets = data_array[:,1] # Define labels (y)
+        self.targets = data[:,1] # Define labels (y)
         self.numerical_labels = numpy.array([self.label_scheme[item] for item in self.targets])
         self.one_hot_numerical_labels = to_categorical(self.numerical_labels, 3)
     
     def get_data(self):
-        '''Getter method for raw_data attribute of Dataset class.
-        '''
+        '''Getter method for raw_data attribute of Dataset class.'''
         return self.raw_data
 
     def get_clean_sequences(self):
-        '''Getter method for cleaned data
-        '''
+        '''Getter method for cleaned data.'''
         return self.clean_sequences
     
     def get_vocab_info(self):
