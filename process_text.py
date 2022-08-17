@@ -4,7 +4,7 @@
 # @author: miranda (upquark00)
 
 import re 
-from string import punctuation 
+import string
 
 def process_data(tweets_array):
     '''
@@ -28,7 +28,7 @@ def process_data(tweets_array):
     
     list_of_lists = [tweet.lower() for tweet in tweets_array]
     list_of_lists = [re.sub('https?://[A-Za-z0-9./]+','', tweet) for tweet in list_of_lists]
-    list_of_lists = [tweet.translate(str.maketrans('', '', punctuation)) for tweet in list_of_lists] 
+    list_of_lists = [tweet.translate(str.maketrans('', '', string.punctuation)) for tweet in list_of_lists] 
     
     list_of_lists = [tweet.split(' ') for tweet in list_of_lists]
     
