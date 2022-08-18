@@ -22,8 +22,20 @@ def build_single_embedding_array(tweet, model, average_vector, cols):
     Returns a 3D array of size ( 1 x # Padded Sequence Length x # Features),
     or (1 x 35 x 50). 
     
-    Inputs: tweet must be a list of strings. 
-    Returns: 
+    Parameters: 
+        tweet (list) contains strings
+        model (dict): each key is a string representing a word contained in the
+            GloVe model. Each corresponding item is a numpy.ndarray of shape 
+            (Features,); in this case (50,)
+        average_vector (numpy.ndarray): 
+        cols (int): length of pre-trained word vectors
+            
+    Returns:
+        formatted_embedding_matrix (numpy.ndarray): 3D matrix of size (1, 35, 50), 
+            i.e. (1, length of padded sequences, features).
+        missing_words (list): variable length. Counts number of words in a single
+            Tweet that are "missing", i.e. not found in the GloVe model vectors. 
+            If a word is missing, its vector is replaced by the average vector.
     
     ''' 
     rows = len(tweet) # Num words in the tweet
@@ -57,7 +69,23 @@ def build_stacked_embedding_array(tweets_list, model, average_vector, cols):
     ( # Tweets in Set x # Words in Each Padded Tweet x # Word Vector Length)
     For Tweets.csv, this is 14640 x 35 x 50. 
         
-    Inputs: tweets_list will be a list of lists containing strings. ''' 
+    Parameters: 
+        tweets_list (list): each element is a list representing a single tweet; 
+            each element of this inner list is a string representing a tokenized
+            word from a cleaned and processed Tweet. 
+        model (dict): each key is a string representing a word contained in the
+            GloVe model. Each corresponding item is a numpy.ndarray of shape 
+            (Features,); in this case (50,) 
+        average_vector (numpy.ndarray): 
+        cols (int): length of pre-trained word vectors
+            
+    Returns: 
+       large_embedding_matrix (numpy.ndarray): 3D numpy array of shape (14640, 35, 50), 
+           e.g. (instances, padded sequence length, features). 
+       total_missing_words (list): contains all Tweeted words not included in our
+           pre-trained GloVe model 
+           
+    ''' 
     
     total_missing_words = []
     axis0 = len(tweets_list)
@@ -71,9 +99,14 @@ def build_stacked_embedding_array(tweets_list, model, average_vector, cols):
             total_missing_words.append(i)
     return large_embedding_matrix, total_missing_words
 
-cols = 50 # Length of pre-trained word vectors
+cols = 50 
 
-# Missing words is a dictionary of all Tweeted words that are not in our GloVe model.
+'''
+clean_sequences (list): each list contains lists of strings of length
+n, where n is equal to the number of examples in the data set (14640).
+Each string is a cleaned and tokenized sentence.
+'''
+                
 clean_sequences = dataset.get_clean_sequences()
 stacked_embedding_array, missing_words = build_stacked_embedding_array(clean_sequences, glove_model, avg_vec, cols)
 

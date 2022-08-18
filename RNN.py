@@ -98,34 +98,3 @@ model.save("model.h5")
 print("Model saved.")
 
 print('Script completed after',time.time() - start, 'seconds.')
-
-# =============================================================================
-# - - - - - - - - - - - The Harder, Math-y Way - - - - - - - - - - - 
-
-# # Define model hyperparameters 
-# learning_rate = 0.0001    
-# # epochs = 25 
-# T = 50 # length of gloVe training vectors; also padded tweet sentences 
-# hidden_dim = 100 # Number units in hidden layer 
-# out_dim = 3 # Test various
-# vocab_size = gi.vocab_size # Length of longest sequence 
-# 
-# # Initialize weights matrices 
-# U = np.random.uniform(low=0, high=1, size=(hidden_dim,T)) # Weights btwn hidden/input layers
-# W = np.random.uniform(low=0, high=1, size=(hidden_dim,hidden_dim)) # Weights between hidden units
-# V = np.random.uniform(low=0, high=1, size=(out_dim,hidden_dim)) # Weights between hidden/output layers 
-# 
-# # Define sigmoid function, which will accept a vector of size hidden_dim x 1
-# def sigmoid(array):
-#     ''' Standard sigmoid activation function.''' 
-#     # np.exp applies function to every element in the array 
-#     return 1 / (1 + np.exp(-array))
-# 
-# bptt_truncate = 5 # Define number steps to perform BPTT
-# min_clip_value = -10
-# max_clip_value = 10
-# 
-# (Coming Soon)
-#
-# layer = Dropout(0.5)
-# =============================================================================

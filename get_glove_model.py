@@ -10,6 +10,15 @@ def make_glove_model():
     ''' 
     Load gloVe pre-trained vectors. 
     Dict keys = tokens (strings); values = word vectors (numpy arrays of length 50). 
+    
+    Parameters: 
+        None
+        
+    Returns: 
+        avg_vec (numpy.ndarray): 1D array of size (50,), i.e. (features,). 
+            Contains the arithmetic mean or "average" of word vectors in the 
+            GloVe model. A reasonable substitute for the vectors of missing 
+            words per the  author.
     ''' 
     filename = 'Data/glove_twitter_50d.txt'
     print("gloVe vectors loading . . .")
