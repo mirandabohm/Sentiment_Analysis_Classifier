@@ -28,9 +28,9 @@ class Dataset:
             raw_data (numpy.ndarray): dimensions are (14640, 15)
 
         '''
-        self.raw_data = self.load_data(filename)
+        self.__raw_data = self.load_data(filename)
         self.define_data()
-        self.set_labels(self.raw_data)
+        self.set_labels(self.__raw_data)
         
     def load_data(self, filename):
         '''
@@ -69,11 +69,11 @@ class Dataset:
                 Dimensions are (10,). 
         '''
         
-        tweets = self.raw_data[:,10]
-        self.clean_sequences = process_data(tweets)
-        self.vocab = set(chain.from_iterable(self.clean_sequences))
-        self.vocab_size = len(self.vocab) + 1 # Unique words in the set
-        self.longest_sequence = len(max(self.clean_sequences, key=len))
+        tweets = self.__raw_data[:,10]
+        self.__clean_sequences = process_data(tweets)
+        self.__vocab = set(chain.from_iterable(self.__clean_sequences))
+        self.__vocab_size = len(self.__vocab) + 1 # Unique words in the set
+        self.longest_sequence = len(max(self.__clean_sequences, key=len))
             
     def set_labels(self, data):
         '''
@@ -98,10 +98,10 @@ class Dataset:
                 
         '''
         
-        self.label_scheme = {'negative': 0, 'neutral': 1, 'positive': 2}
-        self.targets = data[:,1]
-        self.numerical_labels = numpy.array([self.label_scheme[item] for item in self.targets])
-        self.one_hot_numerical_labels = to_categorical(self.numerical_labels, 3)
+        self.__label_scheme = {'negative': 0, 'neutral': 1, 'positive': 2}
+        self.__targets = data[:,1]
+        self.__numerical_labels = numpy.array([self.__label_scheme[item] for item in self.__targets])
+        self.__one_hot_numerical_labels = to_categorical(self.__numerical_labels, 3)
     
     def get_data(self):
         '''Getter method for raw_data attribute of Dataset class.'''
@@ -109,15 +109,19 @@ class Dataset:
 
     def get_clean_sequences(self):
         '''Getter method for clean_sequences attribute of Dataset class.'''
-        return self.clean_sequences
+        return self.__clean_sequences
+    
+    def get_label_scheme(self):
+        '''Getter method for label_scheme attribute of class Dataset'''
+        return self.__label_scheme
     
     def get_vocab_info(self):
         '''Getter method for vocab_size attribute of Dataset class.'''
-        return self.vocab, self.vocab_size
+        return self.__vocab, self.__vocab_size
     
     def get_one_hot_numerical_labels(self):
         '''Getter method for one_hot_numerical_labels attribute of Dataset class.'''
-        return self.one_hot_numerical_labels
+        return self.__one_hot_numerical_labels
 
 
 dataset = Dataset(filename = 'Data/Tweets.csv') 

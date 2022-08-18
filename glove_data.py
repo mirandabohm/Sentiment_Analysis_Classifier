@@ -74,7 +74,8 @@ def build_stacked_embedding_array(tweets_list, model, average_vector, cols):
 cols = 50 # Length of pre-trained word vectors
 
 # Missing words is a dictionary of all Tweeted words that are not in our GloVe model.
-stacked_embedding_array, missing_words = build_stacked_embedding_array(dataset.clean_sequences, glove_model, avg_vec, cols)
+clean_sequences = dataset.get_clean_sequences()
+stacked_embedding_array, missing_words = build_stacked_embedding_array(clean_sequences, glove_model, avg_vec, cols)
 
 train_size = round(len(stacked_embedding_array) * .8) # 11712
 
@@ -82,9 +83,10 @@ x_data = stacked_embedding_array
 train_x = x_data[:train_size] # (11712, 35, 50)
 test_x = x_data[train_size::] # (2928, 35, 50)
 
-y_data = dataset.one_hot_numerical_labels
-train_y = dataset.one_hot_numerical_labels[:train_size] # (11712, 3)
-test_y = dataset.one_hot_numerical_labels[train_size::] # (2928, 3)
+one_hot_numerical_labels = dataset.get_one_hot_numerical_labels()
+y_data = one_hot_numerical_labels
+train_y = one_hot_numerical_labels[:train_size] # (11712, 3)
+test_y = one_hot_numerical_labels[train_size::] # (2928, 3)
 
 def main():
     print('Module finished.')

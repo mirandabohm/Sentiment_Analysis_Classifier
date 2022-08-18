@@ -15,11 +15,11 @@ https://docs.anaconda.com/anaconda/install/
 ## Dependencies
 The GloVe and Kaggle data will need to be downloaded from their respective sites and placed within a subdirectory named Data. 
 
-GloVe: Global Vectors for Word Representation 
+**GloVe: Global Vectors for Word Representation** 
 This model utilizes the 50d Twitter set found here: 
 https://nlp.stanford.edu/projects/glove/
 
-The Twitter U.S. Airline Sentiment dataset from Kaggle
+**The Twitter U.S. Airline Sentiment dataset from Kaggle**  
 Dimensions: 14640 examples by 15 features. Sentiment is 63% negative, 21% neutral, 16% positive.*
 
 https://www.kaggle.com/crowdflower/twitter-airline-sentiment
@@ -46,7 +46,7 @@ https://matplotlib.org/users/installing.html
 
 Download the repo and run get_glove_model.py to build glove_model.npy and avg_vec.npy. Once these files are written, run run_me.py. I will adapt project structure to automatically call get_glove_model.py from within run_me.py, going forward. 
 
-An overview of each module: 
+## Module Overview
 
 ### RNN.py: Build and Train Model
 By default, model architecture is Sequential, with two LSTM layers, and a topmost Dense layer. Editable attributes include Dense activation, number of hidden units, and Dropout regularization. Hyperparameters such as batch size, maximum allowable epochs, and early stopping characteristics can also be tweaked here. Output is a model.h5 model file which can be called directly, without need for repetitive retraining. RNN also includes performance evaluation and matplotlib visualizations of accuracy and loss.  
@@ -60,7 +60,7 @@ First constructs a 3D array containing word vectors for every token included in 
 ### process_text.py: Cleans Tweet Data
 Includes regex expressions to lowercase, tokenize, and format Tweet data. Removes URLs, @mentions, and other junk punctuation. Does not remove stopwords, which was intentional, but may add this optional functionality later. Returns a list of lists. 
 
-### get_glove_model.py: Load GloVe Pre-trained Word Vectors
+### get_glove_model.py: Loads GloVe Pre-trained Word Vectors
 Output is a dictionary called gloveModel, wherein keys are vocabulary tokens (strings) and values consist of pre-trained word vectors (Numpy arrays of length 50). Vector lengths greater than and less than 50 can be chosen instead on the Kaggle website. 
 The separateness of this module from glove_data.py precludes the need to load the GloVe dictionary with every model run. 
 
@@ -71,9 +71,9 @@ Builds a structured Tweets dataset, including cleaned data and one-hot-encoded l
 
 With early stopping, training ceased after 37 epochs and yielded the following success metrics: 
 
-accuracy: 0.81831
-recall: 0.80704
-precision: 0.82999
+accuracy: 0.81831  
+recall: 0.80704  
+precision: 0.82999  
 
 ```
 batch_size = ~64
