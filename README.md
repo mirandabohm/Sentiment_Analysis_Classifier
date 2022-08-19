@@ -2,15 +2,15 @@
   
 The goal was to build a classifier that could identify the overall sentiment of user input, such that each string received one of three possible mutually-exclusive labels: 'positive', 'negative', or 'neutral'. The task was thus framed as a three-class classification problem, in which each model output consisted of likelihood scores for each class. Targets associated with the highest of class scores were then assigned. A regression approach could also have been used; rather than yield a prediction likelihood for each class, the model in that case would have presented a number between -1.0 and 1.0 for each input datum. A target value closer to the negative value would have been labeled 'negative' (after some determined threshold), and those closer to the positive would have been labeled 'positive'. Those nearer to zero would have been determined to be neutral. Both approaches are valid and ideally would find similar results. 
 
-![Animation Illustrating Classifier Interface](images/example.gif)
+![Animation Illustrating Classifier Interface](classifier/images/example.gif)
 
-In order to boost accuracy and reduce  computational resources, I opted to use a pre-trained set of word vectors trained on a very large corpus of Twitter data. GloVe is a an unsupervised solution derived from the distributional hypothesis, which states that “words which are similar in meaning occur in similar contexts.” (Herbert Rubenstein and John B. Goodenough. 1965. Contextual Correlates of Synonymy. Communications of the ACM (October 1965), https://doi.org/10.1145/365628.365657). GloVe is [on Github](https://github.com/stanfordnlp/GloVe).
+In order to boost accuracy and reduce  computational resources, I opted to use a pre-trained set of word vectors trained on a very large corpus of Twitter data. GloVe is a an unsupervised solution derived from the distributional hypothesis, which states that “words which are similar in meaning occur in similar contexts.” (Herbert Rubenstein and John B. Goodenough. 1965. Contextual Correlates of Synonymy. Communications of the ACM (October 1965), https://doi.org/10.1145/365628.365657). GloVe is [on Github](https://github.com/stanfordnlp/GloVe).  
 
-**The Concept**
+**The Concept**  
 Embeddings allow the representation of words as real-valued vectors in high-dimensional space. GloVe uses an unsupervised approach to learn co-occurrence statistics from a large corpus of text. The structure of resultant mappings is meaningful in that words appearing in similar contexts will bear interesting relationships to one another in feature space. 
 
 ## Getting Started
-The model was built in Python v. 3.7.6 and Anaconda 4.8.3. Anaconda is a powerful scientific computing platform which includes its own package and environment manager. To get Anaconda, visit the official downloads page: 
+The model was built in Python v. 3.7.6 and Anaconda 4.8.3. Anaconda is a powerful scientific computing platform which includes its own package and environment manager. To get Anaconda, visit the official downloads page:  
 
 https://docs.anaconda.com/anaconda/install/
 
@@ -18,7 +18,8 @@ https://docs.anaconda.com/anaconda/install/
 The GloVe and Kaggle data will need to be downloaded from their respective sites and placed within a subdirectory named Data. 
 
 **GloVe: Global Vectors for Word Representation** 
-This model utilizes the 50d Twitter set found here: 
+This model utilizes the 50d Twitter set found here:  
+
 https://nlp.stanford.edu/projects/glove/
 
 **The Twitter U.S. Airline Sentiment dataset from Kaggle**  
@@ -28,14 +29,13 @@ https://www.kaggle.com/crowdflower/twitter-airline-sentiment
 
 As outlined below, such class skew can be problematic, and I hope to address this in future iterations of this project. 
 
-**Tensorflow (including Keras):
+**Tensorflow (including Keras)**  
 https://www.tensorflow.org/install/pip
 ```
 ! conda install tensorflow
 ```
 
-NumPy:
-
+**NumPy**  
 https://docs.scipy.org/doc/numpy/user/install.html
 ```
 ! conda install numpy
@@ -83,10 +83,10 @@ LSTM units = ~32 # 15 to 30 between two or more layers; higher numbers provoked 
 Dropout = ~0.20
 ``` 
 
-![Image of Accuracy vs. Epochs](images/Figure_9.png)![Image of Accuracy vs. Epochs](images/Figure_10.png)
+![Image of Accuracy vs. Epochs](classifier/images/Figure_9.png)![Image of Accuracy vs. Epochs](classifier/images/Figure_10.png)  
 
 
-![Image of Loss vs. Epochs](images/Figure_11.png)![Image of Loss vs. Epochs](images/Figure_12.png)
+![Image of Loss vs. Epochs](classifier/images/Figure_11.png)![Image of Loss vs. Epochs](classifier/images/Figure_12.png)  
 
 ## Future Tasks
 Model accuracy averaged around 75-85% on training and testing data, with various parameters.  
