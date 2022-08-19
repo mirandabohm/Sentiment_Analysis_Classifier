@@ -20,7 +20,7 @@ def make_glove_model():
             GloVe model. A reasonable substitute for the vectors of missing 
             words per the  author.
     ''' 
-    filename = 'Data/glove_twitter_50d.txt'
+    filename = 'data/glove_twitter_50d.txt'
     print("gloVe vectors loading . . .")
     with open(filename,'r', encoding='utf8') as foo:
         gloveModel = {}
