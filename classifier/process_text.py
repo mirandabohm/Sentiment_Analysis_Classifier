@@ -8,18 +8,16 @@ import string
 
 def process_data(tweets_array):
     '''
-    Tokenize and clean data. Removes punctuation, Twitter @mentions, URLS,
+    Tokenizes and cleans data. Removes punctuation, Twitter @mentions, URLS,
     and extraneous spaces. Lowercases words.
     
-    Parameters
-    ----------
-    tweets_array : numpy array of shape (m,), containing m number of Tweets,
-    which are sequences of strings.
+    Parameters:
+        tweets_array (numpy array): shape (m,), containing m number of Tweets,
+            which are sequences of strings.
 
-    Returns
-    -------
-    list_of_lists : list of lists of strings of length n, where n is equal
-    to the number of examples in the data set.
+    Returns:
+        list_of_lists (list): list of lists of strings of length n, where n is 
+            equal to the number of examples in the data set.
 
     '''
     
@@ -29,10 +27,8 @@ def process_data(tweets_array):
     list_of_lists = [tweet.lower() for tweet in tweets_array]
     list_of_lists = [re.sub('https?://[A-Za-z0-9./]+','', tweet) for tweet in list_of_lists]
     list_of_lists = [tweet.translate(str.maketrans('', '', string.punctuation)) for tweet in list_of_lists] 
-    
     list_of_lists = [tweet.split(' ') for tweet in list_of_lists]
     
-    # comment 
     for i in range(len(list_of_lists)):
         list_of_lists[i] = [word for word in list_of_lists[i] if word != '']
     

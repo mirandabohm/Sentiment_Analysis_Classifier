@@ -3,8 +3,9 @@
 # Created on Tue July 16 13:24:27 2020
 # @author: miranda (upquark00)
 
-import numpy as numpy 
+import numpy 
 import os 
+import pickle
 
 def make_glove_model():
     ''' 
@@ -20,6 +21,7 @@ def make_glove_model():
             GloVe model. A reasonable substitute for the vectors of missing 
             words per the  author.
     ''' 
+
     filename = 'data/glove_twitter_50d.txt'
     print("gloVe vectors loading . . .")
     with open(filename,'r', encoding='utf8') as foo:
@@ -47,15 +49,22 @@ def make_glove_model():
     print(len(gloveModel),"gloVe vectors loaded.")
     return gloveModel, avg_vec
 
-if not os.path.isfile('glove_model.npy'):
+
+def get_models():
     glove_model, avg_vec = make_glove_model()
-    numpy.save('glove_model.npy', glove_model)  
-    numpy.save('avg_vec.npy', avg_vec)  
+
+    with open('saved_glove_model.pkl', 'wb') as f:
+        pickle.dump(glove_model, f)
+            
+    with open('saved_avg_vec.pkl', 'wb') as f:
+        pickle.dump(avg_vec, f)
+
 
 def main():
-    print('type: ', type(avg_vec))
-    print('len: ', len(avg_vec))
-    print('len of glove_model: ', len(glove_model))
+    
+    if not os.path.isfile('saved_glove_model.pkl'):
+        get_models()
+
 
 if __name__ == "__main__":
     main()

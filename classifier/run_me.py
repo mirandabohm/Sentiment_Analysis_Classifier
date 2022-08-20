@@ -4,11 +4,17 @@
 # @author: miranda (upquark00)
 
 import numpy
+import pickle
 from tensorflow.keras.models import load_model
 from process_text import process_data
-from glove_data import glove_model, avg_vec, build_stacked_embedding_array, cols
+from glove_data import build_stacked_embedding_array, fetch_pickle_data
 from get_inputs import dataset
 
+# TODO: add this to run_me: if files are not in path, populate them
+
+glove_model, avg_vec = fetch_pickle_data()
+
+cols = len(avg_vec)
 model = load_model('best_model.h5')
 label_scheme = dataset.get_label_scheme() 
 

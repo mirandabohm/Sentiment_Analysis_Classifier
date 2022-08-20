@@ -3,17 +3,29 @@
 # Created on Tue May  5 13:24:27 2020
 # @author: miranda (upquark00)
 
+import pickle
 import numpy
 from get_inputs import dataset
-from get_glove_model import make_glove_model
 
 # TODO: model is not standalone. Throws an error if glove_model.npy or avg_vec.npy not present
-# =============================================================================
-# glove_model = numpy.load('glove_model.npy',allow_pickle='TRUE').item()
-# avg_vec = numpy.load('avg_vec.npy', allow_pickle='TRUE').tolist()
-# =============================================================================
+# TODO: 8/19/2022: rename module to "format_data" or something similar. 
+# TODO: 8/19/2022: create new module called "fetch_pickle_data" to open .pkl files. 
 
-glove_model, avg_vec = make_glove_model() 
+def fetch_pickle_data():
+    '''Retrieves GloVe vectors and computed average vector from .pkl file.
+    
+    Should ideally check file path to ensure these exist and call module to 
+    create these if they are absent. Eventually, will move to own module.
+    
+    '''
+    with open('saved_glove_model.pkl', 'rb') as f:
+        glove_model = pickle.load(f)
+    
+    with open('saved_avg_vec.pkl', 'rb') as f:
+        avg_vec = pickle.load(f)
+    
+    return glove_model, avg_vec
+
 
 def build_single_embedding_array(tweet, model, average_vector, cols):
     ''' 
@@ -74,7 +86,7 @@ def build_stacked_embedding_array(tweets_list, model, average_vector, cols):
             each element of this inner list is a string representing a tokenized
             word from a cleaned and processed Tweet. 
         model (dict): each key is a string representing a word contained in the
-            GloVe model. Each corresponding item is a numpy.ndarray of shape 
+            GloVe model. Each corresponding value is a numpy.ndarray of shape 
             (Features,); in this case (50,) 
         average_vector (numpy.ndarray): 
         cols (int): length of pre-trained word vectors
@@ -99,18 +111,22 @@ def build_stacked_embedding_array(tweets_list, model, average_vector, cols):
             total_missing_words.append(i)
     return large_embedding_matrix, total_missing_words
 
-cols = 50 
 
 '''
 clean_sequences (list): each list contains lists of strings of length
 n, where n is equal to the number of examples in the data set (14640).
 Each string is a cleaned and tokenized sentence.
 '''
+
+glove_model, avg_vec = fetch_pickle_data()
+
+train_percent = 0.80
+cols = len(avg_vec)
                 
 clean_sequences = dataset.get_clean_sequences()
 stacked_embedding_array, missing_words = build_stacked_embedding_array(clean_sequences, glove_model, avg_vec, cols)
 
-train_size = round(len(stacked_embedding_array) * .8) # 11712
+train_size = round(len(stacked_embedding_array) * train_percent) # 11712
 
 x_data = stacked_embedding_array
 train_x = x_data[:train_size] # (11712, 35, 50)
