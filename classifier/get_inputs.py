@@ -9,9 +9,11 @@ from process_text import process_data
 from itertools import chain
 from tensorflow.keras.utils import to_categorical
 
+# TODO: rename getter and setter methods for brevity; remove "get." 
+
 class Dataset:
     '''
-    This is a class containing dataset vectors, intended to take raw, 
+    A class containing dataset vectors, intended to take raw, 
     unformatted text and convert and store its cleaned and tokenized versions.
     It also creates and carries one-hot-encoded labels for said data. 
     
@@ -21,7 +23,7 @@ class Dataset:
         '''
         The constructor for Dataset class.
         
-        Parameters:
+        Args:
             filename (string): path to Tweets data file. Accepts .csv format
             
         Defines attributes: 
@@ -36,7 +38,7 @@ class Dataset:
         '''
         Loads .csv data into Dataset class for processing and analysis. 
         
-        Parameters:
+        Args:
             filename (string): path and filename including file extension.
         
         Returns: 
@@ -49,8 +51,9 @@ class Dataset:
             return raw_data
         
     def define_data(self):
-        '''Setter method for class Dataset. Defines: 
-            
+        '''Setter method for class Dataset. 
+        
+        Returns:
             clean_sequences (list): each list contains lists of strings of length
                 n, where n is equal to the number of examples in the data set (14640).
                 Each string is a cleaned and tokenized sentence.
@@ -79,10 +82,10 @@ class Dataset:
         '''
         Setter method for label classes.
         
-        Parameters: 
+        Args: 
             data (numpy.ndarray): dimensions are (examples, features)
             
-        Defines: 
+        Returns:
             label_scheme (dict): contains mutually exclusive categorical labels
                 "negative" = 0, "neutral" = 1, "positive" = 2. 
                 
@@ -115,9 +118,12 @@ class Dataset:
         '''Getter method for label_scheme attribute of class Dataset'''
         return self.__label_scheme
     
-    def get_vocab_info(self):
+    def get_vocab(self):
         '''Getter method for vocab_size attribute of Dataset class.'''
-        return self.__vocab, self.__vocab_size
+        return self.__vocab
+    
+    def get_vocab_size(self):
+        return self.__vocab_size
     
     def get_one_hot_numerical_labels(self):
         '''Getter method for one_hot_numerical_labels attribute of Dataset class.'''
@@ -126,6 +132,7 @@ class Dataset:
 
 dataset = Dataset(filename = 'Data/Tweets.csv') 
 clean_tweets = dataset.get_clean_sequences() # List 
-vocab, vocab_size = dataset.get_vocab_info() # Returns a set and an int, respectively
+vocab = dataset.get_vocab() # Returns a set
+vocab_size = dataset.get_vocab_size() # Returns an int
 one_hot_numerical_labels = dataset.get_one_hot_numerical_labels()
 
