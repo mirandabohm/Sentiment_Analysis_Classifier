@@ -7,64 +7,115 @@ import numpy
 import os 
 import pickle
 
-def make_glove_model():
-    ''' 
-    Load gloVe pre-trained vectors. 
-    Dict keys = tokens (strings); values = word vectors (numpy arrays of length 50). 
+def load_glove():
+    '''
+    Loads GloVe vectors and computed average vector from separate .pkl files.
     
-    Parameters: 
-        None
+    Args: None
+    
+    Returns:
+        GloVe_dict (dict): each key is a string representing a token (string)
+            contained in pre-trained GloVe model. "Token" signifies a single 
+            word which may contain symbols but no spaces. Each corresponding
+            value is a numpy array containing the real-valued feature vector
+            of that word. Its size is (features,).
         
-    Returns: 
-        avg_vec (numpy.ndarray): 1D array of size (50,), i.e. (features,). 
+        average_vector (numpy.ndarray): 1D array of size (features,), i.e. (50,).
             Contains the arithmetic mean or "average" of word vectors in the 
             GloVe model. A reasonable substitute for the vectors of missing 
-            words per the  author.
+            words per the paper's original author.
+    '''
+    
+    with open('saved_glove_model.pkl', 'rb') as f:
+        GloVe_dict = pickle.load(f)
+    
+    with open('saved_avg_vec.pkl', 'rb') as f:
+        average_vector = pickle.load(f)
+    
+    return GloVe_dict, average_vector
+
+def make_glove_model(filepath):
+    ''' 
+    Loads GloVe pre-trained word vectors from a designated .txt file, returning 
+    a dictionary called GloVe_dict. Each dictionary key is a single GloVe word 
+    (token) as a string. Each dictionary value is a numpy array whose dimension 
+    is (features,), i.e. (50,), containing a real-valued vector representation 
+    of the corresponding key token. 
+    
+    Args: 
+        filepath (string): path to the location of the downloaded file containing 
+            pre-trained GloVe vectors. Must be .txt file type. These are available
+            at https://nlp.stanford.edu/projects/glove/.
+        
+    Returns: 
+        GloVe_dict (dict): each key is a string representing a token (string)
+            contained in pre-trained GloVe model. "Token" signifies a single 
+            word which may contain symbols but no spaces. Each corresponding
+            value is a numpy array containing the real-valued feature vector
+            of that word. Its size is (features,).
+        
+        average_vector (numpy.ndarray): 1D array of size (features,), i.e. (50,).
+            Contains the arithmetic mean or "average" of word vectors in the 
+            GloVe model. A reasonable substitute for the vectors of missing 
+            words per the paper's original author.
     ''' 
 
-    filename = 'data/glove_twitter_50d.txt'
     print("gloVe vectors loading . . .")
-    with open(filename,'r', encoding='utf8') as foo:
-        gloveModel = {}
+    
+    with open(filepath,'r', encoding='utf8') as foo:
+        GloVe_dict = {}
         for line in foo:
             splitLines = line.split()
             word = splitLines[0]
             wordEmbedding = numpy.array([float(value) for value in splitLines[1:]])
-            gloveModel[word] = wordEmbedding
+            GloVe_dict[word] = wordEmbedding
             
     # Get average of word vectors to be used for unseen words, per GloVe author
-    with open(filename, 'r', encoding='utf8') as foo:
+    with open(filepath, 'r', encoding='utf8') as foo:
         for i, line in enumerate(foo):
             pass
+
     n_vec = i + 1
     hidden_dim = len(line.split(' ')) - 1
     
     vecs = numpy.zeros((n_vec, hidden_dim), dtype=numpy.float32)
     
-    with open(filename, 'r', encoding='utf8') as foo:
+    with open(filepath, 'r', encoding='utf8') as foo:
         for i, line in enumerate(foo):
             vecs[i] = numpy.array([float(n) for n in line.split(' ')[1:]], dtype=numpy.float32)
     
-    avg_vec = numpy.mean(vecs, axis=0)
-    print(len(gloveModel),"gloVe vectors loaded.")
-    return gloveModel, avg_vec
+    average_vector = numpy.mean(vecs, axis=0)
+    print(len(GloVe_dict),"gloVe vectors loaded.")
+    return GloVe_dict, average_vector
 
+def save_glove(filepath):
+    '''
+    Calls make_glove_model to create and save pickled versions of the GloVe 
+        model dictionary and a calculated average_vector (used as a standin for
+        missing words).
+                                                                   
+    Args:
+        filepath (string): path to the location of the downloaded file containing 
+            pre-trained GloVe vectors. Must be .txt file type. These are available
+            at https://nlp.stanford.edu/projects/glove/.
 
-def get_models():
-    glove_model, avg_vec = make_glove_model()
+    Returns:
+        None.           
+    '''
+    
+    glove_model, average_vector = make_glove_model(filepath)
 
     with open('saved_glove_model.pkl', 'wb') as f:
         pickle.dump(glove_model, f)
             
     with open('saved_avg_vec.pkl', 'wb') as f:
-        pickle.dump(avg_vec, f)
-
+        pickle.dump(average_vector, f)
 
 def main():
+    filepath = 'data/glove_twitter_50d.txt' 
     
     if not os.path.isfile('saved_glove_model.pkl'):
-        get_models()
-
+        save_glove(filepath)
 
 if __name__ == "__main__":
     main()
