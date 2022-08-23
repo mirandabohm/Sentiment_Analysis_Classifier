@@ -17,7 +17,7 @@ https://docs.anaconda.com/anaconda/install/
 ## Dependencies
 The GloVe and Kaggle data will need to be downloaded from their respective sites and placed within a subdirectory named Data. 
 
-**GloVe: Global Vectors for Word Representation** 
+**GloVe: Global Vectors for Word Representation**  
 This model utilizes the 50d Twitter set found here:  
 
 https://nlp.stanford.edu/projects/glove/
@@ -46,27 +46,30 @@ https://matplotlib.org/users/installing.html
 ! conda install matplotlib
 ```
 
-Download the repo and run get_glove_model.py to build glove_model.npy and avg_vec.npy. Once these files are written, run run_me.py. I will adapt project structure to automatically call get_glove_model.py from within run_me.py going forward. 
+Clone or download the repository to your local machine. Run "run_me.py" - this will load all other modules as necessary. That's it. 
 
 ## Module Overview
 
-### RNN.py: Build and Train Model
-By default, model architecture is Sequential with two LSTM layers and a topmost Dense layer. Editable attributes include Dense activation, number of hidden units, and Dropout regularization. Hyperparameters such as batch size, maximum allowable epochs, and early stopping characteristics can also be tweaked here. Output is a model.h5 model file which can be called directly, without need for repetitive retraining. RNN also includes performance evaluation and matplotlib visualizations of accuracy and loss.  
+### [run_me.py](classifier/run_me.py): Load .h5 Model File and Present Interactive Interface
+Loads model and provides an end-user command line. Sentiment of inputted sentences is determined. Predictions are returned with a percent likelihood score. 
 
-### run_me.py: Load .h5 Model File and Present Interactive Interface
-Loads model and provides a command line for users to input sentences, which will then be judged for their sentiment. Predictions will be graded with a likelihood score. 
+### [RNN.py](classifier/RNN.py): Build and Train Keras Model
+By default, model architecture is Sequential, containing two LSTM layers and a topmost Dense layer. Editable attributes include Dense activation, number of hidden units, and Dropout regularization. Hyperparameters such as batch size, maximum allowable epochs, and early stopping characteristics may also be tweaked here. Output is a model.h5 model file which can be called directly, without need for repetitive retraining. RNN also includes performance evaluation and matplotlib visualizations of accuracy and loss.  The plots will later be populated solely by the independent module [visualize.py](classifier/visualize.py). 
 
-### glove_data.py: Builds Test and Train Datasets
-First constructs a 3D array containing word vectors for every token included in every Tweet in the dataset. 
+### [glove_data.py](classifier/glove_data.py): Builds Test and Train Datasets
+First constructs a 3D array containing word vectors for every token included in every Tweet in the dataset; then formats and structures array to be fed to the model. Default test/train split is 80%/20%. This can be changed. 
 
-### process_text.py: Cleans Tweet Data
+### [process_text.py](classifier/process_text.py): Cleans Tweet Data
 Includes regex expressions to lowercase, tokenize, and format Tweet data. Removes URLs, @mentions, and other junk punctuation. Does not remove stopwords, which was intentional, but may add this optional functionality later. Returns a list of lists. 
 
-### get_glove_model.py: Loads GloVe Pre-trained Word Vectors
+### [get_glove_model.py](classifier/get_glove_model.py): Loads GloVe Pre-trained Word Vectors
 Output is a dictionary called gloveModel, wherein keys are vocabulary tokens (strings) and values consist of pre-trained word vectors (Numpy arrays of length 50). Vector lengths greater than and less than 50 can be chosen instead on the Kaggle website. The separateness of this module from glove_data.py precludes the need to load the GloVe dictionary with every model run. 
 
-### get_inputs.py: Creates a Dataset Object 
+### [get_inputs.py](classifier/get_inputs.py): Creates a Dataset Object 
 Builds a structured Tweets dataset, including cleaned data and one-hot-encoded labels. 
+
+### [visualize.py](classifier/visualize.py): Plot Performance Metrics
+Will display visualizations of accuracy, precision, loss, and recall using Matplotlib. 
 
 ## Results
 
