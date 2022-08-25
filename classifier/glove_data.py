@@ -3,7 +3,6 @@
 # Created on Tue May  5 13:24:27 2020
 # @author: miranda (upquark00)
 
-import pickle
 import numpy
 from get_inputs import dataset
 import get_glove_model
@@ -108,12 +107,10 @@ def build_stacked_embedding_array(clean_sequences, model, average_vector, cols):
             total_missing_words.append(i)
     return large_embedding_matrix, total_missing_words
 
-
-
 train_percent = 0.80
 cols = len(average_vector)
                 
-clean_sequences = dataset.get_clean_sequences()
+clean_sequences = dataset.clean_sequences()
 stacked_embedding_array, missing_words = build_stacked_embedding_array(clean_sequences, glove_model, average_vector, cols)
 
 train_size = round(len(stacked_embedding_array) * train_percent) # 11712
@@ -122,7 +119,7 @@ x_data = stacked_embedding_array
 train_x = x_data[:train_size] # (11712, 35, 50)
 test_x = x_data[train_size::] # (2928, 35, 50)
 
-one_hot_numerical_labels = dataset.get_one_hot_numerical_labels()
+one_hot_numerical_labels = dataset.one_hot_numerical_labels()
 y_data = one_hot_numerical_labels
 train_y = one_hot_numerical_labels[:train_size] # (11712, 3)
 test_y = one_hot_numerical_labels[train_size::] # (2928, 3)

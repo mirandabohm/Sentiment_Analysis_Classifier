@@ -21,20 +21,21 @@ class Dataset:
     
     def __init__(self, filename):
         '''
-        The constructor for Dataset class.
+        The constructor for class  Dataset.
         
         Args:
-            filename (string): path to Tweets data file. Accepts .csv format
+            filename (string): path to Tweets data file, which should be a .csv
             
         Defines attributes: 
             raw_data (numpy.ndarray): dimensions are (14640, 15)
 
         '''
-        self.__raw_data = self.load_data(filename)
+        self.__filename = filename
+        self.__raw_data = self.load_data()
         self.define_data()
         self.set_labels(self.__raw_data)
         
-    def load_data(self, filename):
+    def load_data(self):
         '''
         Loads .csv data into Dataset class for processing and analysis. 
         
@@ -44,7 +45,7 @@ class Dataset:
         Returns: 
             raw_data (numpy.ndarray): dimensions are (examples, features)
         '''
-        with open(filename, 'r', encoding='utf8') as f:
+        with open(self.__filename, 'r', encoding='utf8') as f:
             reader = csv.reader(f, delimiter=',')
             headers = next(reader)
             raw_data = numpy.array(list(reader))
@@ -106,33 +107,33 @@ class Dataset:
         self.__numerical_labels = numpy.array([self.__label_scheme[item] for item in self.__targets])
         self.__one_hot_numerical_labels = to_categorical(self.__numerical_labels, 3)
     
-    def get_data(self):
+    def data(self):
         '''Getter method for raw_data attribute of Dataset class.'''
         return self.raw_data
 
-    def get_clean_sequences(self):
+    def clean_sequences(self):
         '''Getter method for clean_sequences attribute of Dataset class.'''
         return self.__clean_sequences
     
-    def get_label_scheme(self):
+    def label_scheme(self):
         '''Getter method for label_scheme attribute of class Dataset'''
         return self.__label_scheme
     
-    def get_vocab(self):
+    def vocabulary(self):
         '''Getter method for vocab_size attribute of Dataset class.'''
         return self.__vocab
     
-    def get_vocab_size(self):
+    def vocab_size(self):
         return self.__vocab_size
     
-    def get_one_hot_numerical_labels(self):
+    def one_hot_numerical_labels(self):
         '''Getter method for one_hot_numerical_labels attribute of Dataset class.'''
         return self.__one_hot_numerical_labels
 
 
 dataset = Dataset(filename = 'Data/Tweets.csv') 
-clean_tweets = dataset.get_clean_sequences() # List 
-vocab = dataset.get_vocab() # Returns a set
-vocab_size = dataset.get_vocab_size() # Returns an int
-one_hot_numerical_labels = dataset.get_one_hot_numerical_labels()
+clean_tweets = dataset.clean_sequences() # List 
+vocab = dataset.vocabulary() # Returns a set
+vocab_size = dataset.vocab_size() # Returns an int
+one_hot_numerical_labels = dataset.one_hot_numerical_labels()
 

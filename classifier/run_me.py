@@ -3,8 +3,10 @@
 # Created on Tue May  5 13:24:27 2020
 # @author: miranda (upquark00)
 
+# TODO: add mechanism by which to run RNN.py in the case that model.h5 is 
+# absent from the directory. 
+
 import numpy
-import pickle
 from tensorflow.keras.models import load_model
 from process_text import process_data
 from glove_data import build_stacked_embedding_array, glove_model, average_vector
@@ -12,7 +14,7 @@ from get_inputs import dataset
 
 cols = len(average_vector)
 model = load_model('model.h5')
-label_scheme = dataset.get_label_scheme() 
+label_scheme = dataset.label_scheme() 
 
 user_input = ''
 while user_input != 'n':

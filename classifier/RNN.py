@@ -14,52 +14,47 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
 start = time.time()
 
-class RNN: 
-    '''
-    Builds an RNN using the Keras.Sequential model. 
-    '''
-    
-    batch_size = 64
-    max_epochs = 500
-    num_classes = 3 # Output of Dense is (None, num_classes)
-    
-    input_length = 35 # Length of input sequences, ie, length of padded sentences 
-    input_dim = dataset.get_vocab_size() # Num unique tokens in the dataset; needed for Embedding
-    output_dim = 50 # Dimensionality of space into which words will be embedded. 
-    
-    model = Sequential()
-    
-    # Can also add an Embedding layer here for transfer learning.     
-    model.add(LSTM(units = 25, input_shape = (35,50), return_sequences = True, dropout= 0.20))
-    # model.add(Dropout(0.2))
-    model.add(LSTM(units = 15, dropout= 0.1))
-    model.add(Dense(num_classes, activation='softmax'))
-    
-    model.compile(loss = 'categorical_crossentropy', 
-                 optimizer = 'adam', 
-                 metrics = [
-                     'accuracy', 
-                     Precision(name='precision'), 
-                     Recall(name='recall'),
-                     TruePositives(name='TP'),
-                     TrueNegatives(name='TN'),
-                     FalsePositives(name='FP'),
-                     FalseNegatives(name='FN')])
-    
-    early_stopping = EarlyStopping(monitor='val_loss', 
-                                   mode='min', verbose=1, 
-                                   patience = 9,
-                                   restore_best_weights = False
-                                   )
-    
-    model_checkpoint = ModelCheckpoint('model.h5', monitor='val_loss', mode='min', verbose=1)
-    
-    history = model.fit(train_x, train_y,
-              batch_size = batch_size, 
-              epochs = max_epochs,
-              validation_split = 0.33,
-              callbacks = [early_stopping, model_checkpoint]
-              )
+batch_size = 64
+max_epochs = 500
+num_classes = 3 # Output of Dense is (None, num_classes)
+
+input_length = 35 # Length of input sequences, ie, length of padded sentences 
+input_dim = dataset.vocab_size() # Num unique tokens in the dataset; needed for Embedding
+output_dim = 50 # Dimensionality of space into which words will be embedded. 
+
+model = Sequential()
+
+# Can also add an Embedding layer here for transfer learning.     
+model.add(LSTM(units = 25, input_shape = (35,50), return_sequences = True, dropout= 0.20))
+# model.add(Dropout(0.2))
+model.add(LSTM(units = 15, dropout= 0.1))
+model.add(Dense(num_classes, activation='softmax'))
+
+model.compile(loss = 'categorical_crossentropy', 
+             optimizer = 'adam', 
+             metrics = [
+                 'accuracy', 
+                 Precision(name='precision'), 
+                 Recall(name='recall'),
+                 TruePositives(name='TP'),
+                 TrueNegatives(name='TN'),
+                 FalsePositives(name='FP'),
+                 FalseNegatives(name='FN')])
+
+early_stopping = EarlyStopping(monitor='val_loss', 
+                               mode='min', verbose=1, 
+                               patience = 9,
+                               restore_best_weights = False
+                               )
+
+model_checkpoint = ModelCheckpoint('model.h5', monitor='val_loss', mode='min', verbose=1)
+
+history = model.fit(train_x, train_y,
+          batch_size = batch_size, 
+          epochs = max_epochs,
+          validation_split = 0.33,
+          callbacks = [early_stopping, model_checkpoint]
+          )
 
 def visualize(history):
     '''Plots model results.
@@ -102,7 +97,6 @@ def visualize(history):
     plt.legend(['Train', 'Test'], loc='upper left')
     plt.show()
 
-model = RNN()
 model.summary()
 loss, accuracy, precision, recall, TP, TN, FP, FN = model.evaluate(test_x, test_y)
 visualize(history)
