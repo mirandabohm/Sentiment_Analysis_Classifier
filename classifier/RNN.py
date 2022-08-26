@@ -59,7 +59,7 @@ history = model.fit(train_x, train_y,
 def visualize(history):
     '''Plots model results.
     
-    Parameters: 
+    Args: 
             history (tensorflow.python.keras.callbacks.History object): 'History'
                 object which records events and is returned by the 'fit' 
                 func of Keras models

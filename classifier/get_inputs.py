@@ -5,7 +5,7 @@
 
 import numpy 
 import csv
-from process_text import process_data
+from process_text import clean
 from itertools import chain
 from tensorflow.keras.utils import to_categorical
 
@@ -33,7 +33,7 @@ class Dataset:
         self.__filename = filename
         self.__raw_data = self.load_data()
         self.define_data()
-        self.set_labels(self.__raw_data)
+        self.set_labels()
         
     def load_data(self):
         '''
@@ -74,12 +74,15 @@ class Dataset:
         '''
         
         tweets = self.__raw_data[:,10]
-        self.__clean_sequences = process_data(tweets)
+        self.__clean_sequences = clean(tweets)
         self.__vocab = set(chain.from_iterable(self.__clean_sequences))
         self.__vocab_size = len(self.__vocab) + 1 # Unique words in the set
         self.longest_sequence = len(max(self.__clean_sequences, key=len))
             
-    def set_labels(self, data):
+    def set_labels(self):
+        
+        # TODO: no need to pass "data" as an arg. Just use self.data. 
+        
         '''
         Setter method for label classes.
         
@@ -103,12 +106,12 @@ class Dataset:
         '''
         
         self.__label_scheme = {'negative': 0, 'neutral': 1, 'positive': 2}
-        self.__targets = data[:,1]
+        self.__targets = self.__raw_data[:,1]
         self.__numerical_labels = numpy.array([self.__label_scheme[item] for item in self.__targets])
         self.__one_hot_numerical_labels = to_categorical(self.__numerical_labels, 3)
     
     def data(self):
-        '''Getter method for raw_data attribute of Dataset class.'''
+        '''Getter method for raw data contained within Dataset class.'''
         return self.raw_data
 
     def clean_sequences(self):
@@ -120,20 +123,28 @@ class Dataset:
         return self.__label_scheme
     
     def vocabulary(self):
-        '''Getter method for vocab_size attribute of Dataset class.'''
+        '''Getter method for vocabulary attribute of Dataset class.'''
         return self.__vocab
     
     def vocab_size(self):
+        '''Getter method for vocab_size attribute of Dataset class.'''
         return self.__vocab_size
     
     def one_hot_numerical_labels(self):
         '''Getter method for one_hot_numerical_labels attribute of Dataset class.'''
         return self.__one_hot_numerical_labels
 
-
 dataset = Dataset(filename = 'Data/Tweets.csv') 
 clean_tweets = dataset.clean_sequences() # List 
 vocab = dataset.vocabulary() # Returns a set
 vocab_size = dataset.vocab_size() # Returns an int
 one_hot_numerical_labels = dataset.one_hot_numerical_labels()
+
+def main():
+    print('Module finished.')
+        
+   
+if __name__ == "__main__":
+    main()
+    
 

@@ -6,13 +6,13 @@
 import re 
 import string
 
-def process_data(tweets_array):
+def clean(tweets_array):
     
     '''
     Tokenizes and cleans data. Removes punctuation, Twitter @mentions, URLS,
     and extraneous spaces. Lowercases words.
     
-    Parameters:
+    Args:
         tweets_array (numpy array): shape (m,), containing m number of Tweets,
             which are sequences of strings.
 
@@ -41,7 +41,7 @@ def process_data(tweets_array):
     
 def main():
     print('Module finished.')
-    # clean_tweets = process_data()
+    # clean_tweets = clean()
    
 if __name__ == "__main__":
     main()

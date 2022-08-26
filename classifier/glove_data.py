@@ -120,7 +120,7 @@ train_x = x_data[:train_size] # (11712, 35, 50)
 test_x = x_data[train_size::] # (2928, 35, 50)
 
 one_hot_numerical_labels = dataset.one_hot_numerical_labels()
-y_data = one_hot_numerical_labels
+y_data = one_hot_numerical_labels  # TODO: Why not set y_data directly?
 train_y = one_hot_numerical_labels[:train_size] # (11712, 3)
 test_y = one_hot_numerical_labels[train_size::] # (2928, 3)
 
