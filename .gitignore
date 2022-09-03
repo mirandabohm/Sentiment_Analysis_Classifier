@@ -152,6 +152,9 @@ ehthumbs_vista.db
 # Dump file
 *.stackdump
 
+# Serialized objects
+*.pkl
+
 # Folder config file
 [Dd]esktop.ini
 
