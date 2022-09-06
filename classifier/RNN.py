@@ -4,12 +4,14 @@
 # @author: miranda (upquark00)
 
 import time
+
 import matplotlib.pyplot as plt
-from glove_data import train_x, test_x, train_y, test_y
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
 from tensorflow.keras.metrics import Precision, Recall, TruePositives, TrueNegatives, FalsePositives, FalseNegatives
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+
+from glove_data import train_x, test_x, train_y, test_y
 
 start = time.time()
 
@@ -18,8 +20,8 @@ class RNN:
     def __init__(self, batch_size = 64, epochs = 500, num_classes = 3):
         '''
         Constructor for class RNN. Defines hyperparameters of recurrent neural
-        network via additive layering of the Tensorflow.Keras Sequential model. 
-        
+        network via additive layering of the Tensorflow.Keras Sequential model.
+    
         Args:
             batch_size (int or None): number of samples per gradient update.
             epochs (int): number of epochs to train the model. An eopch is an 
@@ -61,21 +63,22 @@ class RNN:
         model = Sequential()
         
         # Can also add an Embedding layer here for transfer learning.     
-        model.add(LSTM(units = 25, input_shape = (35,50), return_sequences = True, dropout= 0.20))
+        model.add(LSTM(units = 25, input_shape = (35,50), 
+                       return_sequences = True, 
+                       dropout= 0.20))
         # model.add(Dropout(0.2))
         model.add(LSTM(units = 15, dropout= 0.1))
         model.add(Dense(self.num_classes, activation='softmax'))
         
         model.compile(loss = 'categorical_crossentropy', 
                      optimizer = 'adam', 
-                     metrics = [
-                         'accuracy', 
-                         Precision(name='precision'), 
-                         Recall(name='recall'),
-                         TruePositives(name='TP'),
-                         TrueNegatives(name='TN'),
-                         FalsePositives(name='FP'),
-                         FalseNegatives(name='FN')])
+                     metrics = ['accuracy', 
+                                Precision(name='precision'), 
+                                Recall(name='recall'),
+                                TruePositives(name='TP'),
+                                TrueNegatives(name='TN'),
+                                FalsePositives(name='FP'),
+                                FalseNegatives(name='FN')])
         
         early_stopping = EarlyStopping(monitor='val_loss', 
                                        mode='min', verbose=1, 
@@ -88,12 +91,13 @@ class RNN:
                                            mode='min', 
                                            verbose=1)
         
-        history = model.fit(train_x, train_y,
-                  batch_size = self.batch_size, 
-                  epochs = self.epochs,
-                  validation_split = 0.33,
-                  callbacks = [early_stopping, model_checkpoint]
-                  )
+        history = model.fit(train_x, 
+                            train_y,
+                            batch_size = self.batch_size, 
+                            epochs = self.epochs,
+                            validation_split = 0.33,
+                            callbacks = [early_stopping, model_checkpoint]
+                            )
         
         return model, history, early_stopping
     
@@ -101,11 +105,7 @@ class RNN:
         '''
         Plots model results.
         
-        Args: 
-            history (tensorflow.python.keras.callbacks.History object): 'History'
-                object which records events and is returned by the 'fit' 
-                func of Keras models
-        
+        Args: None
         Returns: None    
         
         '''
@@ -156,5 +156,4 @@ print('Training stopped after', early_stopping.stopped_epoch,'epochs.')
 model.save("model.h5")
 
 print("Model saved.")
-
 print('Script completed after',time.time() - start, 'seconds.')

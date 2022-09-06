@@ -8,10 +8,14 @@
 
 import numpy
 from tensorflow.keras.models import load_model
+
+import get_inputs
 from process_text import clean
 from glove_data import build_stacked_embedding_array, glove_model, average_vector
-from get_inputs import dataset
 
+# TODO: create model.h5 if it doesn't exist 
+
+dataset = get_inputs.Dataset()
 cols = len(average_vector)
 model = load_model('model.h5')
 label_scheme = dataset.label_scheme() 

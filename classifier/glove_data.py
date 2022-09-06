@@ -4,20 +4,22 @@
 # @author: miranda (upquark00)
 
 import numpy
-from get_inputs import dataset
+import get_inputs
 import get_glove_model
 
 # TODO: model is not standalone. Throws an error if glove_model.npy or avg_vec.npy not present
 # TODO: 8/19/2022: rename module to "format_data" or something similar. 
 # TODO: 8/19/2022: create new module called "load_glove" to open .pkl files. 
 
-filepath = 'data/glove_twitter_50d.txt' 
+GloVe_filepath = 'data/glove_twitter_50d.txt' 
+GloVe_Model = get_glove_model.GloVe()
+dataset = get_inputs.Dataset()
     
 try: 
-    glove_model, average_vector = get_glove_model.load_glove()
+    glove_model, average_vector = GloVe_Model.load_glove()
 except:
-    get_glove_model.save_glove(filepath)
-    glove_model, average_vector = get_glove_model.load_glove()
+    GloVe_Model.save_glove()
+    glove_model, average_vector = GloVe_Model.load_glove()
 
 def build_single_embedding_array(tweet, model, average_vector, cols):
     ''' 
