@@ -6,6 +6,10 @@
 import re 
 import string
 
+# TODO: add functionality to filter out strings containing only digits.  
+# Deal with emojis, imbalanced classes, and the many words not in GloVe. 
+# Enact explicit lemmatization
+
 def clean(tweets_array):
     
     '''
@@ -34,11 +38,7 @@ def clean(tweets_array):
         list_of_lists[i] = [word for word in list_of_lists[i] if word != '']
     
     return list_of_lists
-
-# TODO: add functionality to filter out strings containing only digits.  
-# Deal with emojis, imbalanced classes, and the many words not in GloVe. 
-# Enact explicit lemmatization
-    
+   
 def main():
     print('Module finished.')
     # clean_tweets = clean()

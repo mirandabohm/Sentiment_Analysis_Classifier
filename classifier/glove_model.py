@@ -7,7 +7,7 @@ import numpy
 import os 
 import pickle
 
-# TODO: rename module Glove_Model, which calls GloVe Class
+# TODO: rename load_glove, save_glove etc. simply "load", "save" 
 
 class GloVe:
     

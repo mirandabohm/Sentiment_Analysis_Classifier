@@ -12,6 +12,7 @@ from tensorflow.keras.utils import to_categorical
 from process_text import clean
 
 # TODO: Rename module "Tweets Data" or similar
+# TODO: replace getter/setter methods and private vars, Effective Python pg. 182 
 
 class Dataset:
     '''

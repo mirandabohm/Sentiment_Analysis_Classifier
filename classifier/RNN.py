@@ -3,6 +3,8 @@
 # Created on Tue May  5 13:24:27 2020
 # @author: miranda (upquark00)
 
+# TODO: 9/11/2022: call build_RNN in __init__
+
 import time
 
 import matplotlib.pyplot as plt
@@ -67,7 +69,7 @@ class RNN:
                        return_sequences = True, 
                        dropout= 0.20))
         # model.add(Dropout(0.2))
-        model.add(LSTM(units = 15, dropout= 0.1))
+        model.add(LSTM(units = 15, dropout = 0.1))
         model.add(Dense(self.num_classes, activation='softmax'))
         
         model.compile(loss = 'categorical_crossentropy', 

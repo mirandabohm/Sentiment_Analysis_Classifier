@@ -3,16 +3,31 @@
 # Created on Tue May  5 13:24:27 2020
 # @author: miranda (upquark00)
 
-import numpy
-import get_inputs
-import get_glove_model
+'''
+TODO: Make independent; throws error if glove_model.npy or avg_vec.npy not present
+TODO: 8/19/2022: rename module to "format_data" or something similar. 
+TODO: 8/19/2022: create new module called "load_glove" to open .pkl files.
+TODO: 9/11/22: 
+    1. Make terms consistent throughout documentation and var names
+    2. Clean up script, make helper functions 
+    3. Combine the single_ and stacked_ embedding array functions into one. 
+    
+TERMS USED IN THIS SCRIPT
+    - Sequence = Tweet = Sentence composed of Timesteps (Words)
+    - Timesteps = Words in each Tweet/Sequence
+    - Columns ()
+    - Rows = Number of timesteps/words in each Tweet/Sequence
+    - Cols = int, fixed length of pre-trained GloVe word vectors (50)
 
-# TODO: model is not standalone. Throws an error if glove_model.npy or avg_vec.npy not present
-# TODO: 8/19/2022: rename module to "format_data" or something similar. 
-# TODO: 8/19/2022: create new module called "load_glove" to open .pkl files. 
+'''
+
+import numpy
+
+import get_inputs
+import glove_model
 
 GloVe_filepath = 'data/glove_twitter_50d.txt' 
-GloVe_Model = get_glove_model.GloVe()
+GloVe_Model = glove_model.GloVe()
 dataset = get_inputs.Dataset()
     
 try: 
@@ -24,54 +39,66 @@ except:
 def build_single_embedding_array(tweet, model, average_vector, cols):
     ''' 
     Construct a matrix of word vectors for each tweet with an added axis 0.
-    Rows = Timesteps, eg Word Vectors; Columns = Feature Vectors.
+    Rows = Timesteps, e.g. word vectors; columns = feature vectors.
     Returns a 3D array of size ( 1 x # Padded Sequence Length x # Features),
     or (1 x 35 x 50). 
     
     Args: 
-        tweet (list): contains strings
+        tweet (list): each list element is a tokenized word (string).
+        
         model (dict): each key is a string representing a word contained in the
-            GloVe model. Each corresponding item is a numpy.ndarray of shape 
-            (Features,); in this case (50,)
-        average_vector (numpy.ndarray): 
-        cols (int): length of pre-trained word vectors
+            GloVe model. Each corresponding value is a numpy.ndarray of shape 
+            (Features,); in this case (50,).
+            
+        average_vector (numpy.ndarray): 1D array of size (features,), i.e. (50,).
+            Contains the arithmetic mean or "average" of word vectors in the 
+            GloVe model. A reasonable substitute for the vectors of missing 
+            words per the paper's original author.
+            
+        cols (int): length of pre-trained word vectors.
             
     Returns:
-        formatted_embedding_matrix (numpy.ndarray): 3D matrix of size (1, 35, 50), 
+        padded_embedding_matrix (numpy.ndarray): 3D matrix of size (1, 35, 50), 
             i.e. (1, length of padded sequences, features).
-        missing_words (list): variable length. Counts number of words in a single
-            Tweet that are "missing", i.e. not found in the GloVe model vectors. 
-            If a word is missing, its vector is replaced by the average vector.
-    
+            
+        missing_words (list): each element is a word (string) appearing in a Tweet
+            but not found in the keys of the pre-trained GloVe model dictionary. 
+            If a word is in this list, the computed average_vector will be used
+            in place of its (nonexistent) GloVe vector in the embedding array.
+            
     ''' 
     rows = len(tweet) # Num words in the tweet
     embedding_matrix = numpy.zeros([rows, cols])
     missing_words = []
-    for index in range(rows): 
-        # Return the word vector corresponding to each word in the tweet (sequence)
-        try:
-            word_vector = model[tweet[index]] 
+    
+    for index, word in enumerate(tweet): 
+        try: 
+            word_vector = model[word]
         except KeyError: 
             word_vector = average_vector
-            # missing_words[tweet[index]] = index
-            missing_words.append(tweet[index])
+            missing_words.append(word)
         finally: 
-            # Each row is a separate word vector (parenthesis)
+            # One row = one word vector
             embedding_matrix[index] = word_vector
-    
+
     # Add a dimension to the 2D embedding array along axis zero. This satisfies
     # dimensionality requirements such that it can be added to the stacked array.
     embedding_matrix = numpy.expand_dims(embedding_matrix, axis = 0)
     
     # Pad second dimension with zeroes to standardize sequence length. 
     # Set final dimension to the length of the longest sequence (35). 
-    formatted_embedding_matrix = numpy.pad(embedding_matrix, ((0,0),(0,35-rows),(0,0)),'constant')
-    return formatted_embedding_matrix, missing_words
+    padded_embedding_matrix = numpy.pad(embedding_matrix, 
+                                           ((0, 0),
+                                            (0, 35 - rows),
+                                            (0, 0)),
+                                           'constant')
+    
+    return padded_embedding_matrix, missing_words
    
 def build_stacked_embedding_array(clean_sequences, model, average_vector, cols):
     ''' 
     Builds a 3-dimensional numpy array with the following dimensions: 
-    ( # Instances x Padded Sequence Length # Features ), or
+    ( # Instances x Padded Sequence Length x # Features ), or
     ( # Tweets in Set x # Words in Each Padded Tweet x # Word Vector Length)
     For Tweets.csv, this is 14640 x 35 x 50. 
         
@@ -86,26 +113,34 @@ def build_stacked_embedding_array(clean_sequences, model, average_vector, cols):
             
         model (dict): each key is a string representing a word contained in the
             GloVe model. Each corresponding value is a numpy.ndarray of shape 
-            (Features,); in this case (50,) 
-        average_vector (numpy.ndarray): 
+            (Features,); in this case (50,).
+            
+        average_vector (numpy.ndarray): 1D array of size (features,), i.e. (50,).
+            Contains the arithmetic mean or "average" of word vectors in the 
+            GloVe model. A reasonable substitute for the vectors of missing 
+            words per the paper's original author. 
+            
         cols (int): length of pre-trained word vectors
             
     Returns: 
-       large_embedding_matrix (numpy.ndarray): 3D numpy array of shape (14640, 35, 50), 
-           e.g. (instances, padded sequence length, features). 
-       total_missing_words (list): contains all Tweeted words not included in our
-           pre-trained GloVe model 
+       large_embedding_matrix (numpy.ndarray): 3D numpy array of shape        
+           (instances, padded sequence length, features), i.e. (14640, 35, 50).
+          
+        total_missing_words (list): each element is a word (string) appearing in a Tweet
+            but not found in the keys of the pre-trained GloVe model dictionary. 
+            If a word is in this list, the computed average_vector will be used
+            in place of its (nonexistent) GloVe vector in the embedding array.
+           
     ''' 
     
     total_missing_words = []
     axis0 = len(clean_sequences)
-    large_embedding_matrix = numpy.zeros([axis0,35,50])
+    large_embedding_matrix = numpy.zeros([axis0, 35, cols])
+    
     for j in range(axis0):
         single_array, missing_words = build_single_embedding_array(clean_sequences[j], model, average_vector, cols)
         large_embedding_matrix[j] = single_array
         for i in missing_words:
-        # for [m,n] in missing_words.items():
-            # total_missing_words[m] = j
             total_missing_words.append(i)
     return large_embedding_matrix, total_missing_words
 
@@ -113,7 +148,8 @@ train_percent = 0.80
 cols = len(average_vector)
                 
 clean_sequences = dataset.clean_sequences()
-stacked_embedding_array, missing_words = build_stacked_embedding_array(clean_sequences, glove_model, average_vector, cols)
+stacked_embedding_array, missing_words = build_stacked_embedding_array(
+    clean_sequences, glove_model, average_vector, cols)
 
 train_size = round(len(stacked_embedding_array) * train_percent) # 11712
 
