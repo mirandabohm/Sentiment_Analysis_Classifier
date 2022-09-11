@@ -15,7 +15,7 @@ The model was built in Python v. 3.7.6 and Anaconda 4.8.3. Anaconda is a powerfu
 https://docs.anaconda.com/anaconda/install/
 
 ## Dependencies
-The GloVe and Kaggle data will need to be downloaded from their respective sites and placed within a subdirectory named Data. 
+The GloVe and Kaggle data will need to be downloaded from their respective sites and placed within a subdirectory named "data". 
 
 **GloVe: Global Vectors for Word Representation**  
 This model utilizes the 50d Twitter set found here:  
