@@ -82,7 +82,7 @@ class GloVe:
         
         return GloVe_dict, average_vector
 
-    def save_glove(self):
+    def save(self):
         '''
         Calls make_glove_model to create and save pickled versions of the GloVe 
             model dictionary and a calculated average_vector (used as a standin for
@@ -104,7 +104,7 @@ class GloVe:
         with open('saved_avg_vec.pkl', 'wb') as f:
             pickle.dump(average_vector, f)
 
-    def load_glove(self):
+    def load(self):
         '''
         Loads GloVe vectors and computed average vector from separate .pkl files.
         
@@ -135,7 +135,7 @@ def main():
     GloVe_Model = GloVe()
 
     if not os.path.isfile('saved_glove_model.pkl'):
-        GloVe_Model.save_glove(filepath = 'data/glove_twitter_50d.txt' )
+        GloVe_Model.save(filepath = 'data/glove_twitter_50d.txt' )
 
 if __name__ == "__main__":
     main()

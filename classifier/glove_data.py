@@ -33,10 +33,10 @@ GloVe_Model = glove_model.GloVe()
 dataset = get_inputs.Dataset()
     
 try: 
-    glove_model, average_vector = GloVe_Model.load_glove()
+    glove_model, average_vector = GloVe_Model.load()
 except:
-    GloVe_Model.save_glove()
-    glove_model, average_vector = GloVe_Model.load_glove()
+    GloVe_Model.save()
+    glove_model, average_vector = GloVe_Model.load()
   
 def build_stacked_embedding_array(clean_sequences, model, average_vector, cols):
     ''' 
