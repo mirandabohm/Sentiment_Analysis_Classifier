@@ -139,7 +139,10 @@ cols = len(average_vector)
                 
 clean_sequences = dataset.clean_sequences()
 stacked_embedding_array, missing_words = build_stacked_embedding_array(
-    clean_sequences, glove_model, average_vector, cols)
+    clean_sequences, 
+    glove_model, 
+    average_vector, 
+    cols)
 
 train_size = round(len(stacked_embedding_array) * train_percent) # 11712
 
