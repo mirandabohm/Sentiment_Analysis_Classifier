@@ -22,10 +22,13 @@ TERMS USED IN THIS SCRIPT
 '''
 
 import numpy
+from time import time 
 
 import get_inputs
 import glove_model
 
+start = time()
+    
 GloVe_filepath = 'data/glove_twitter_50d.txt' 
 GloVe_Model = glove_model.GloVe()
 dataset = get_inputs.Dataset()
@@ -35,66 +38,7 @@ try:
 except:
     GloVe_Model.save_glove()
     glove_model, average_vector = GloVe_Model.load_glove()
-
-def build_single_embedding_array(tweet, model, average_vector, cols):
-    ''' 
-    Construct a matrix of word vectors for each tweet with an added axis 0.
-    Rows = Timesteps, e.g. word vectors; columns = feature vectors.
-    Returns a 3D array of size ( 1 x # Padded Sequence Length x # Features),
-    or (1 x 35 x 50). 
-    
-    Args: 
-        tweet (list): each list element is a tokenized word (string).
-        
-        model (dict): each key is a string representing a word contained in the
-            GloVe model. Each corresponding value is a numpy.ndarray of shape 
-            (Features,); in this case (50,).
-            
-        average_vector (numpy.ndarray): 1D array of size (features,), i.e. (50,).
-            Contains the arithmetic mean or "average" of word vectors in the 
-            GloVe model. A reasonable substitute for the vectors of missing 
-            words per the paper's original author.
-            
-        cols (int): length of pre-trained word vectors.
-            
-    Returns:
-        padded_embedding_matrix (numpy.ndarray): 3D matrix of size (1, 35, 50), 
-            i.e. (1, length of padded sequences, features).
-            
-        missing_words (list): each element is a word (string) appearing in a Tweet
-            but not found in the keys of the pre-trained GloVe model dictionary. 
-            If a word is in this list, the computed average_vector will be used
-            in place of its (nonexistent) GloVe vector in the embedding array.
-            
-    ''' 
-    rows = len(tweet) # Num words in the tweet
-    embedding_matrix = numpy.zeros([rows, cols])
-    missing_words = []
-    
-    for index, word in enumerate(tweet): 
-        try: 
-            word_vector = model[word]
-        except KeyError: 
-            word_vector = average_vector
-            missing_words.append(word)
-        finally: 
-            # One row = one word vector
-            embedding_matrix[index] = word_vector
-
-    # Add a dimension to the 2D embedding array along axis zero. This satisfies
-    # dimensionality requirements such that it can be added to the stacked array.
-    embedding_matrix = numpy.expand_dims(embedding_matrix, axis = 0)
-    
-    # Pad second dimension with zeroes to standardize sequence length. 
-    # Set final dimension to the length of the longest sequence (35). 
-    padded_embedding_matrix = numpy.pad(embedding_matrix, 
-                                           ((0, 0),
-                                            (0, 35 - rows),
-                                            (0, 0)),
-                                           'constant')
-    
-    return padded_embedding_matrix, missing_words
-   
+  
 def build_stacked_embedding_array(clean_sequences, model, average_vector, cols):
     ''' 
     Builds a 3-dimensional numpy array with the following dimensions: 
@@ -130,18 +74,64 @@ def build_stacked_embedding_array(clean_sequences, model, average_vector, cols):
             but not found in the keys of the pre-trained GloVe model dictionary. 
             If a word is in this list, the computed average_vector will be used
             in place of its (nonexistent) GloVe vector in the embedding array.
-           
+
     ''' 
     
-    total_missing_words = []
+    total_missing_words = set()
     axis0 = len(clean_sequences)
     large_embedding_matrix = numpy.zeros([axis0, 35, cols])
     
+    def build_single_embedding_array(clean_sequences):
+        '''
+        Construct a matrix of word vectors for each tweet with an added axis 0.
+        Rows = Timesteps, e.g. word vectors; columns = feature vectors.
+        Returns a 3D array of size ( 1 x # Padded Sequence Length x # Features),
+        or (1 x 35 x 50). 
+             
+        Args: 
+            clean_sequences (list): each list element is a tokenized word (string).
+                     
+        Returns:
+            padded_embedding_matrix (numpy.ndarray): 3D matrix of size (1, 35, 50), 
+            i.e. (1, length of padded sequences, features). 
+            
+        '''
+               
+        rows = len(clean_sequences) # Num words in the tweet
+        embedding_matrix = numpy.zeros([rows, cols])
+        missing_words = set()
+        
+        for index, word in enumerate(clean_sequences): 
+            try: 
+                word_vector = model[word]
+            except KeyError: 
+                word_vector = average_vector
+                missing_words.add(word)
+            finally: 
+                # One row = one word vector
+                embedding_matrix[index] = word_vector
+
+        # Add a dimension to the 2D embedding array along axis zero. This satisfies
+        # dimensionality requirements such that it can be added to the stacked array.
+        embedding_matrix = numpy.expand_dims(embedding_matrix, axis = 0)
+        
+        # Pad second dimension with zeroes to standardize sequence length. 
+        # Set final dimension to the length of the longest sequence (35). 
+        padded_embedding_matrix = numpy.pad(embedding_matrix, 
+                                               ((0, 0),
+                                                (0, 35 - rows),
+                                                (0, 0)),
+                                               'constant')
+        
+        return padded_embedding_matrix, missing_words
+    
     for j in range(axis0):
-        single_array, missing_words = build_single_embedding_array(clean_sequences[j], model, average_vector, cols)
+        single_array, missing_words = build_single_embedding_array(clean_sequences[j])
         large_embedding_matrix[j] = single_array
+        
         for i in missing_words:
-            total_missing_words.append(i)
+            total_missing_words.add(i)
+            
     return large_embedding_matrix, total_missing_words
 
 train_percent = 0.80
@@ -162,8 +152,11 @@ y_data = one_hot_numerical_labels  # TODO: Why not set y_data directly?
 train_y = one_hot_numerical_labels[:train_size] # (11712, 3)
 test_y = one_hot_numerical_labels[train_size::] # (2928, 3)
 
+end = time()
+
 def main():
     print('Module finished.')
+    print('Total time: ', str(end-start))
    
 if __name__ == "__main__":
     main()
