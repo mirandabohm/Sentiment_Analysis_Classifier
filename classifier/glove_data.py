@@ -4,13 +4,12 @@
 # @author: miranda (upquark00)
 
 '''
-TODO: Make independent; throws error if glove_model.npy or avg_vec.npy not present
 TODO: 8/19/2022: rename module to "format_data" or something similar. 
-TODO: 8/19/2022: create new module called "load_glove" to open .pkl files.
+
 TODO: 9/11/22: 
     1. Make terms consistent throughout documentation and var names
-    2. Clean up script, make helper functions 
-    3. Combine the single_ and stacked_ embedding array functions into one. 
+    2. Clean up embedding array function
+    3. Lines 80 and 96 are redundant 
     
 TERMS USED IN THIS SCRIPT
     - Sequence = Tweet = Sentence composed of Timesteps (Words)
@@ -70,14 +69,14 @@ def build_stacked_embedding_array(clean_sequences, model, average_vector, cols):
        large_embedding_matrix (numpy.ndarray): 3D numpy array of shape        
            (instances, padded sequence length, features), i.e. (14640, 35, 50).
           
-        total_missing_words (list): each element is a word (string) appearing in a Tweet
+        missing_words (set): each element is a word (string) appearing in a Tweet
             but not found in the keys of the pre-trained GloVe model dictionary. 
             If a word is in this list, the computed average_vector will be used
             in place of its (nonexistent) GloVe vector in the embedding array.
 
     ''' 
     
-    total_missing_words = set()
+    missing_words = set()
     axis0 = len(clean_sequences)
     large_embedding_matrix = numpy.zeros([axis0, 35, cols])
     
@@ -87,19 +86,15 @@ def build_stacked_embedding_array(clean_sequences, model, average_vector, cols):
         Rows = Timesteps, e.g. word vectors; columns = feature vectors.
         Returns a 3D array of size ( 1 x # Padded Sequence Length x # Features),
         or (1 x 35 x 50). 
-             
-        Args: 
-            clean_sequences (list): each list element is a tokenized word (string).
                      
         Returns:
             padded_embedding_matrix (numpy.ndarray): 3D matrix of size (1, 35, 50), 
             i.e. (1, length of padded sequences, features). 
-            
+
         '''
                
         rows = len(clean_sequences) # Num words in the tweet
         embedding_matrix = numpy.zeros([rows, cols])
-        missing_words = set()
         
         for index, word in enumerate(clean_sequences): 
             try: 
@@ -128,11 +123,8 @@ def build_stacked_embedding_array(clean_sequences, model, average_vector, cols):
     for j in range(axis0):
         single_array, missing_words = build_single_embedding_array(clean_sequences[j])
         large_embedding_matrix[j] = single_array
-        
-        for i in missing_words:
-            total_missing_words.add(i)
             
-    return large_embedding_matrix, total_missing_words
+    return large_embedding_matrix, missing_words
 
 train_percent = 0.80
 cols = len(average_vector)
@@ -159,7 +151,7 @@ end = time()
 
 def main():
     print('Module finished.')
-    print('Total time: ', str(end-start))
+    print('Runtime: ', str(end-start))
    
 if __name__ == "__main__":
     main()
