@@ -40,7 +40,7 @@ https://docs.scipy.org/doc/numpy/user/install.html
 ```
 ! conda install numpy
 ```
-Matplotlib (for visualizations): 
+**Matplotlib (for visualizations)**
 https://matplotlib.org/users/installing.html
 ```
 ! conda install matplotlib
@@ -62,7 +62,7 @@ First constructs a 3D array containing word vectors for every token included in 
 ### [process_text.py](classifier/process_text.py): Cleans Tweet Data
 Includes regex expressions to lowercase, tokenize, and format Tweet data. Removes URLs, @mentions, and other junk punctuation. Does not remove stopwords, which was intentional, but may add this optional functionality later. Returns a list of lists. 
 
-### [get_glove_model.py](classifier/get_glove_model.py): Loads GloVe Pre-trained Word Vectors
+### [glove_model.py](classifier/glove_model.py): Loads GloVe Pre-trained Word Vectors
 Output is a dictionary called gloveModel, wherein keys are vocabulary tokens (strings) and values consist of pre-trained word vectors (Numpy arrays of length 50). Vector lengths greater than and less than 50 can be chosen instead on the Kaggle website. The separateness of this module from glove_data.py precludes the need to load the GloVe dictionary with every model run. 
 
 ### [get_inputs.py](classifier/get_inputs.py): Creates a Dataset Object 
